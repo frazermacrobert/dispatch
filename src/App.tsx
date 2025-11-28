@@ -242,6 +242,11 @@ const App: React.FC = () => {
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
+
+{/* world backdrop layer */}
+      <div className="world-map" />
+      <div className="world-grid-overlay" />
+      
       {phase === "intro" && (
         <div
           style={{
