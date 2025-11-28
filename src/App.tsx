@@ -27,6 +27,8 @@ const App: React.FC = () => {
   const [failCount, setFailCount] = useState(0);
   const [outcomeMessage, setOutcomeMessage] = useState<string | null>(null);
 
+  const [spawnDelay, setSpawnDelay] = useState<number | null>(null);
+
   const timerIntervalRef = useRef<number | null>(null);
   const spawnTimeoutRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
@@ -44,6 +46,9 @@ const App: React.FC = () => {
   // Start game
   const startGame = () => {
     setPhase("playing");
+    setIsPaused(false);
+    isPausedRef.current = false;
+
     setBriefsSpawned(0);
     setSuccessCount(0);
     setFailCount(0);
@@ -51,21 +56,22 @@ const App: React.FC = () => {
     setSelectedBriefId(null);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    
-    // Start the spawn timer
+
+    // start the spawn timer for ongoing briefs
     const [min, max] = spawnConfig.intervalRangeMs;
     setSpawnDelay(min + Math.random() * (max - min));
 
-    // Spawn first brief after initial delay
+    // spawn first brief after initial delay
+    if (spawnTimeoutRef.current) {
+      clearTimeout(spawnTimeoutRef.current);
+    }
     spawnTimeoutRef.current = window.setTimeout(() => {
       spawnBrief(true);
     }, spawnConfig.initialDelayMs);
   };
 
-  const [spawnDelay, setSpawnDelay] = useState<number | null>(null);
-
   // Spawn a new brief
-  const spawnBrief = () => {
+  const spawnBrief = (isFirst: boolean = false) => {
     if (briefsSpawned >= spawnConfig.totalBriefs) {
       setSpawnDelay(null);
       return;
@@ -74,7 +80,7 @@ const App: React.FC = () => {
     const archetype = briefsData[Math.floor(Math.random() * briefsData.length)];
     const newBrief = createBriefInstance(archetype, briefsSpawned);
 
-    // First brief has no timer, others do
+    // first brief has no timer, others do
     if (isFirst) {
       newBrief.timeLimitMs = Infinity;
       newBrief.remainingMs = Infinity;
@@ -86,7 +92,7 @@ const App: React.FC = () => {
 
   useInterval(
     spawnBrief,
-    // Delay in ms or null to pause
+    // delay in ms or null to pause
     isPaused ? null : spawnDelay
   );
 
@@ -105,7 +111,7 @@ const App: React.FC = () => {
 
           const newRemaining = Math.max(0, b.remainingMs - 100);
 
-          // Timer expired
+          // timer expired
           if (newRemaining === 0 && b.remainingMs > 0) {
             setFailCount((c) => c + 1);
             return { ...b, remainingMs: 0, status: "failed" as const };
@@ -133,7 +139,7 @@ const App: React.FC = () => {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [phase]);
+  }, [phase, isPaused]);
 
   // Check if game should end
   useEffect(() => {
@@ -150,7 +156,7 @@ const App: React.FC = () => {
     setSelectedBriefId(briefId);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    isPausedRef.current = true; // Pause all timers
+    isPausedRef.current = true; // pause all timers
   };
 
   // Close modal
@@ -158,12 +164,12 @@ const App: React.FC = () => {
     setSelectedBriefId(null);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    isPausedRef.current = false; // Resume timers
+    isPausedRef.current = false; // resume timers
   };
 
   // Toggle consultant selection
   const handleToggleConsultant = (consultantId: string) => {
-    if (outcomeMessage) return; // Can't change after dispatch
+    if (outcomeMessage) return; // cannot change after dispatch
 
     const consultant = consultants.find((c) => c.id === consultantId);
     if (!consultant || consultant.state === "cooldown") return;
@@ -227,7 +233,7 @@ const App: React.FC = () => {
         : `❌ FAILED. ${outcome.explanation}`
     );
 
-    // Auto-close after 3 seconds
+    // Auto close after 3 seconds
     setTimeout(() => {
       handleCloseModal();
     }, 3000);
@@ -260,11 +266,14 @@ const App: React.FC = () => {
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
+      {/* world backdrop only after intro */}
+      {phase !== "intro" && (
+        <>
+          <div className="world-map" />
+          <div className="world-grid-overlay" />
+        </>
+      )}
 
-{/* world backdrop layer */}
-      <div className="world-map" />
-      <div className="world-grid-overlay" />
-      
       {phase === "intro" && (
         <div
           style={{
@@ -341,10 +350,7 @@ const App: React.FC = () => {
                 <span style={{ color: "#10b981" }}>✓ {successCount}</span>
                 <span style={{ color: "#ef4444" }}>✗ {failCount}</span>
               </div>
-              <button
-                onClick={() => setIsPaused(true)}
-                className="button"
-              >
+              <button onClick={() => setIsPaused(true)} className="button">
                 Pause
               </button>
             </div>
