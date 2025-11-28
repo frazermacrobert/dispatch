@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Consultant, ActiveBrief, ConsultantState } from "./game/types";
 import { evaluateMissionOutcome, createBriefInstance } from "./game/scoring";
+import { useInterval } from "./game/useInterval";
 import consultantsData from "./data/consultants.json";
 import briefsData from "./data/brief_archetypes.json";
 import spawnConfig from "./data/spawn_config.json";
 import { ConsultantBar } from "./components/ConsultantBar";
 import { MarkerLayer } from "./components/MarkerLayer";
 import { BriefModal } from "./components/BriefModal";
+import PauseMenu from "./components/PauseMenu";
 
 // import the start background image from public/
 import startBg from "/startbg.png";
@@ -15,6 +17,7 @@ type GamePhase = "intro" | "playing" | "ended";
 
 const App: React.FC = () => {
   const [phase, setPhase] = useState<GamePhase>("intro");
+  const [isPaused, setIsPaused] = useState(false);
   const [consultants, setConsultants] = useState<Consultant[]>([]);
   const [briefs, setBriefs] = useState<ActiveBrief[]>([]);
   const [selectedBriefId, setSelectedBriefId] = useState<string | null>(null);
@@ -48,6 +51,10 @@ const App: React.FC = () => {
     setSelectedBriefId(null);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
+    
+    // Start the spawn timer
+    const [min, max] = spawnConfig.intervalRangeMs;
+    setSpawnDelay(min + Math.random() * (max - min));
 
     // Spawn first brief after initial delay
     spawnTimeoutRef.current = window.setTimeout(() => {
@@ -55,9 +62,12 @@ const App: React.FC = () => {
     }, spawnConfig.initialDelayMs);
   };
 
+  const [spawnDelay, setSpawnDelay] = useState<number | null>(null);
+
   // Spawn a new brief
-  const spawnBrief = (isFirst: boolean = false) => {
+  const spawnBrief = () => {
     if (briefsSpawned >= spawnConfig.totalBriefs) {
+      setSpawnDelay(null);
       return;
     }
 
@@ -72,21 +82,20 @@ const App: React.FC = () => {
 
     setBriefs((prev) => [...prev, newBrief]);
     setBriefsSpawned((prev) => prev + 1);
-
-    // Schedule next spawn
-    if (briefsSpawned + 1 < spawnConfig.totalBriefs) {
-      const [min, max] = spawnConfig.intervalRangeMs;
-      const delay = min + Math.random() * (max - min);
-      spawnTimeoutRef.current = window.setTimeout(() => spawnBrief(), delay);
-    }
   };
+
+  useInterval(
+    spawnBrief,
+    // Delay in ms or null to pause
+    isPaused ? null : spawnDelay
+  );
 
   // Timer tick (100ms intervals)
   useEffect(() => {
     if (phase !== "playing") return;
 
     timerIntervalRef.current = window.setInterval(() => {
-      if (isPausedRef.current) return;
+      if (isPausedRef.current || isPaused) return;
 
       // Update brief timers
       setBriefs((prev) =>
@@ -224,6 +233,15 @@ const App: React.FC = () => {
     }, 3000);
   };
 
+  const handleResume = () => {
+    setIsPaused(false);
+  };
+
+  const handleQuit = () => {
+    setIsPaused(false);
+    setPhase("intro");
+  };
+
   const selectedBrief = briefs.find((b) => b.id === selectedBriefId);
 
   return (
@@ -297,6 +315,8 @@ const App: React.FC = () => {
 
       {phase === "playing" && (
         <>
+          {isPaused && <PauseMenu onResume={handleResume} onQuit={handleQuit} />}
+
           {/* Status bar */}
           <div
             style={{
@@ -316,9 +336,17 @@ const App: React.FC = () => {
             <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>
               Briefs: {briefsSpawned} / {spawnConfig.totalBriefs}
             </div>
-            <div style={{ display: "flex", gap: "2rem", fontSize: "1.1rem" }}>
-              <span style={{ color: "#10b981" }}>✓ {successCount}</span>
-              <span style={{ color: "#ef4444" }}>✗ {failCount}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+              <div style={{ display: "flex", gap: "2rem", fontSize: "1.1rem" }}>
+                <span style={{ color: "#10b981" }}>✓ {successCount}</span>
+                <span style={{ color: "#ef4444" }}>✗ {failCount}</span>
+              </div>
+              <button
+                onClick={() => setIsPaused(true)}
+                className="button"
+              >
+                Pause
+              </button>
             </div>
           </div>
 
