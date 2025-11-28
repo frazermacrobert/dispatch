@@ -12,17 +12,17 @@ const getBriefIcon = (brief: ActiveBrief): string => {
 
   // learning and development
   if (id.includes("learning") || id.includes("development")) {
-    return "📘";
+    return "👥";
   }
 
   // design / motion / creative
   if (id.includes("design") || id.includes("motion") || name.includes("film")) {
-    return "✦";
+    return "👥";
   }
 
   // audits / research / insights
   if (id.includes("audit") || id.includes("research") || id.includes("insights")) {
-    return "📊";
+    return "👥";
   }
 
   // strategy / brand
@@ -31,10 +31,10 @@ const getBriefIcon = (brief: ActiveBrief): string => {
   }
 
   // fallback by difficulty
-  if (brief.difficultyLabel === "High stakes") return "!";
-  if (brief.difficultyLabel === "Standard") return "●";
+  if (brief.difficultyLabel === "High stakes") return "✦";
+  if (brief.difficultyLabel === "Standard") return "👥";
 
-  return "○";
+  return "👥";
 };
 
 export const MarkerLayer: React.FC<{
@@ -131,44 +131,44 @@ export const MarkerLayer: React.FC<{
               </span>
             </button>
 
-            {/* Progress ring */}
-            {brief.timeLimitMs !== Infinity && (
-              <svg
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%) rotate(-90deg)",
-                  width: "70px",
-                  height: "70px",
-                  pointerEvents: "none",
-                }}
-              >
-                <circle
-                  cx="35"
-                  cy="35"
-                  r="32"
-                  fill="none"
-                  stroke="rgba(255, 255, 255, 0.3)"
-                  strokeWidth="3"
-                />
-                <circle
-                  cx="35"
-                  cy="35"
-                  r="32"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="3"
-                  strokeDasharray={`${2 * Math.PI * 32}`}
-                  strokeDashoffset={`${
-                    2 * Math.PI * 32 * (1 - progress / 100)
-                  }`}
-                  style={{
-                    transition: "stroke-dashoffset 0.1s linear",
-                  }}
-                />
-              </svg>
-            )}
+           {/* Progress ring */}
+{brief.timeLimitMs !== Infinity && (
+  <svg
+    style={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%) rotate(-90deg)",
+      width: "60px",
+      height: "60px",
+      pointerEvents: "none",
+    }}
+  >
+    {/* background track */}
+    <circle
+      cx="30"
+      cy="30"
+      r="26"
+      fill="none"
+      stroke="rgba(255, 255, 255, 0.3)"
+      strokeWidth="3"
+    />
+    {/* foreground progress */}
+    <circle
+      cx="30"
+      cy="30"
+      r="26"
+      fill="none"
+      stroke="white"
+      strokeWidth="3"
+      strokeDasharray={`${2 * Math.PI * 26}`}
+      strokeDashoffset={`${2 * Math.PI * 26 * (1 - progress / 100)}`}
+      style={{
+        transition: "stroke-dashoffset 0.1s linear",
+      }}
+    />
+  </svg>
+)}
 
             {/* Timer text below circle */}
             {brief.timeLimitMs !== Infinity && (
