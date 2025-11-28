@@ -9,8 +9,7 @@
       "speed": 6,
       "strategy": 7,
       "innovation": 8
-    },
-    "state": "available"
+    }
   },
   {
     "id": "craig",
@@ -22,7 +21,114 @@
       "speed": 5,
       "strategy": 6,
       "innovation": 9
-    },
-    "state": "available"
+    }
+  },
+  {
+    "id": "al",
+    "name": "Al",
+    "tag": "Vision/EVP/Mission",
+    "stats": {
+      "charisma": 8,
+      "intelligence": 9,
+      "speed": 4,
+      "strategy": 9,
+      "innovation": 7
+    }
+  },
+  {
+    "id": "miles",
+    "name": "Miles",
+    "tag": "Motion",
+    "stats": {
+      "charisma": 5,
+      "intelligence": 6,
+      "speed": 9,
+      "strategy": 5,
+      "innovation": 8
+    }
+  },
+  {
+    "id": "hayley",
+    "name": "Hayley",
+    "tag": "Recognition & Reward",
+    "stats": {
+      "charisma": 8,
+      "intelligence": 7,
+      "speed": 6,
+      "strategy": 7,
+      "innovation": 6
+    }
+  },
+  {
+    "id": "ste",
+    "name": "Ste",
+    "tag": "Copywriting",
+    "stats": {
+      "charisma": 7,
+      "intelligence": 8,
+      "speed": 7,
+      "strategy": 6,
+      "innovation": 7
+    }
+  },
+  {
+    "id": "jo",
+    "name": "Jo",
+    "tag": "Generalist",
+    "stats": {
+      "charisma": 7,
+      "intelligence": 7,
+      "speed": 7,
+      "strategy": 7,
+      "innovation": 7
+    }
+  },
+  {
+    "id": "gonzalo",
+    "name": "Gonzalo",
+    "tag": "Audits & Listening",
+    "stats": {
+      "charisma": 6,
+      "intelligence": 9,
+      "speed": 5,
+      "strategy": 8,
+      "innovation": 6
+    }
+  },
+  {
+    "id": "rachel",
+    "name": "Rachel",
+    "tag": "Strategy",
+    "stats": {
+      "charisma": 7,
+      "intelligence": 8,
+      "speed": 6,
+      "strategy": 9,
+      "innovation": 7
+    }
+  },
+  {
+    "id": "alex",
+    "name": "Alex",
+    "tag": "Generalist",
+    "stats": {
+      "charisma": 6,
+      "intelligence": 7,
+      "speed": 7,
+      "strategy": 7,
+      "innovation": 7
+    }
+  },
+  {
+    "id": "lucy",
+    "name": "Lucy",
+    "tag": "Generalist",
+    "stats": {
+      "charisma": 7,
+      "intelligence": 6,
+      "speed": 8,
+      "strategy": 6,
+      "innovation": 7
+    }
   }
 ]
