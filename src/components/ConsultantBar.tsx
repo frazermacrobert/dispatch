@@ -38,7 +38,7 @@ export const ConsultantBar: React.FC<{
       {consultants.map((c) => {
         const isCooldown = c.state === "cooldown";
         const avatarFile = getAvatarFile(c.id);
-        const avatarSrc = `/avatars/${avatarFile}`;
+        const avatarSrc = `public/avatars/${avatarFile}`;
         const tooltip = `${c.name} — ${c.tag}`;
 
         return (
