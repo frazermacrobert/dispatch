@@ -7,34 +7,34 @@ const getBriefIcon = (brief: ActiveBrief): string => {
 
   // behaviour / culture type work
   if (id.includes("behaviour") || id.includes("culture")) {
-    return "👥";
+    return "📧";
   }
 
   // learning and development
   if (id.includes("learning") || id.includes("development")) {
-    return "👥";
+    return "⚠️";
   }
 
   // design / motion / creative
   if (id.includes("design") || id.includes("motion") || name.includes("film")) {
-    return "👥";
+    return "⚠️";
   }
 
   // audits / research / insights
   if (id.includes("audit") || id.includes("research") || id.includes("insights")) {
-    return "👥";
+    return "⚠️";
   }
 
   // strategy / brand
   if (id.includes("strategy") || id.includes("brand")) {
-    return "♟";
+    return "⚠️";
   }
 
   // fallback by difficulty
-  if (brief.difficultyLabel === "High stakes") return "✦";
-  if (brief.difficultyLabel === "Standard") return "👥";
+  if (brief.difficultyLabel === "High stakes") return "⚠️";
+  if (brief.difficultyLabel === "Standard") return "⚠️";
 
-  return "👥";
+  return "📧";
 };
 
 export const MarkerLayer: React.FC<{
