@@ -4,11 +4,11 @@
     "name": "Frazer",
     "tag": "Sparkle",
     "stats": {
-      "charisma": 9,
-      "intelligence": 7,
+      "charisma": 4,
+      "intelligence": 3,
       "speed": 6,
-      "strategy": 7,
-      "innovation": 8
+      "strategy": 3,
+      "innovation": 7
     }
   },
   {
@@ -16,11 +16,11 @@
     "name": "Craig",
     "tag": "Design",
     "stats": {
-      "charisma": 6,
-      "intelligence": 7,
-      "speed": 5,
-      "strategy": 6,
-      "innovation": 9
+      "charisma": 3,
+      "intelligence": 3,
+      "speed": 6,
+      "strategy": 3,
+      "innovation": 6
     }
   },
   {
@@ -28,11 +28,11 @@
     "name": "Al",
     "tag": "Vision/EVP/Mission",
     "stats": {
-      "charisma": 8,
-      "intelligence": 9,
-      "speed": 4,
-      "strategy": 9,
-      "innovation": 7
+      "charisma": 3,
+      "intelligence": 6,
+      "speed": 2,
+      "strategy": 6,
+      "innovation": 2
     }
   },
   {
@@ -40,11 +40,11 @@
     "name": "Miles",
     "tag": "Motion",
     "stats": {
-      "charisma": 5,
-      "intelligence": 6,
-      "speed": 9,
-      "strategy": 5,
-      "innovation": 8
+      "charisma": 3,
+      "intelligence": 2,
+      "speed": 4,
+      "strategy": 2,
+      "innovation": 5
     }
   },
   {
@@ -52,11 +52,11 @@
     "name": "Hayley",
     "tag": "Recognition & Reward",
     "stats": {
-      "charisma": 8,
-      "intelligence": 7,
-      "speed": 6,
-      "strategy": 7,
-      "innovation": 6
+      "charisma": 6,
+      "intelligence": 3,
+      "speed": 2,
+      "strategy": 3,
+      "innovation": 2
     }
   },
   {
@@ -64,11 +64,11 @@
     "name": "Ste",
     "tag": "Copywriting",
     "stats": {
-      "charisma": 7,
-      "intelligence": 8,
-      "speed": 7,
-      "strategy": 6,
-      "innovation": 7
+      "charisma": 4,
+      "intelligence": 3,
+      "speed": 3,
+      "strategy": 3,
+      "innovation": 3
     }
   },
   {
@@ -76,11 +76,11 @@
     "name": "Jo",
     "tag": "Generalist",
     "stats": {
-      "charisma": 7,
-      "intelligence": 7,
-      "speed": 7,
-      "strategy": 7,
-      "innovation": 7
+      "charisma": 3,
+      "intelligence": 3,
+      "speed": 3,
+      "strategy": 4,
+      "innovation": 3
     }
   },
   {
@@ -88,11 +88,11 @@
     "name": "Gonzalo",
     "tag": "Audits & Listening",
     "stats": {
-      "charisma": 6,
-      "intelligence": 9,
-      "speed": 5,
-      "strategy": 8,
-      "innovation": 6
+      "charisma": 2,
+      "intelligence": 4,
+      "speed": 2,
+      "strategy": 5,
+      "innovation": 2
     }
   },
   {
@@ -100,11 +100,11 @@
     "name": "Rachel",
     "tag": "Strategy",
     "stats": {
-      "charisma": 7,
-      "intelligence": 8,
-      "speed": 6,
-      "strategy": 9,
-      "innovation": 7
+      "charisma": 2,
+      "intelligence": 7,
+      "speed": 1,
+      "strategy": 6,
+      "innovation": 2
     }
   },
   {
@@ -112,11 +112,11 @@
     "name": "Alex",
     "tag": "Generalist",
     "stats": {
-      "charisma": 6,
-      "intelligence": 7,
-      "speed": 7,
-      "strategy": 7,
-      "innovation": 7
+      "charisma": 5,
+      "intelligence": 3,
+      "speed": 4,
+      "strategy": 4,
+      "innovation": 4
     }
   },
   {
@@ -124,11 +124,11 @@
     "name": "Lucy",
     "tag": "Generalist",
     "stats": {
-      "charisma": 7,
-      "intelligence": 6,
-      "speed": 8,
-      "strategy": 6,
-      "innovation": 7
+      "charisma": 5,
+      "intelligence": 5,
+      "speed": 5,
+      "strategy": 5,
+      "innovation": 4
     }
   }
 ]
