@@ -73,53 +73,93 @@ export const MarkerLayer: React.FC<{
               }}
             />
 
-            {/* shared container for button + svg so they align perfectly */}
-            <div
-              style={{
-                position: "relative",
-                width: "60px",
-                height: "60px",
-                margin: "0 auto",
-              }}
-            >
-              {/* progress ring */}
-              {brief.timeLimitMs !== Infinity && (
-                <svg
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    transform: "rotate(-90deg)",
-                    width: "60px",
-                    height: "60px",
-                    pointerEvents: "none",
-                  }}
-                >
-                  <circle
-                    cx="30"
-                    cy="30"
-                    r="26"
-                    fill="none"
-                    stroke="rgba(255, 255, 255, 0.3)"
-                    strokeWidth="3"
-                  />
-                  <circle
-                    cx="30"
-                    cy="30"
-                    r="26"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="3"
-                    strokeDasharray={`${2 * Math.PI * 26}`}
-                    strokeDashoffset={`${
-                      2 * Math.PI * 26 * (1 - progress / 100)
-                    }`}
-                    style={{
-                      transition: "stroke-dashoffset 0.1s linear",
-                    }}
-                  />
-                </svg>
-              )}
+           {/* shared container for button + svg so they align, but ring sits outside */}
+<div
+  style={{
+    position: "relative",
+    width: "60px",
+    height: "60px",
+    margin: "0 auto",
+  }}
+>
+  {/* progress ring around the outside */}
+  {brief.timeLimitMs !== Infinity && (
+    <svg
+      style={{
+        position: "absolute",
+        inset: 0,
+        transform: "rotate(-90deg)",
+        width: "60px",
+        height: "60px",
+        pointerEvents: "none",
+      }}
+    >
+      {/* track */}
+      <circle
+        cx="30"
+        cy="30"
+        r="28"
+        fill="none"
+        stroke="rgba(255, 255, 255, 0.35)"
+        strokeWidth="3"
+      />
+      {/* progress arc */}
+      <circle
+        cx="30"
+        cy="30"
+        r="28"
+        fill="none"
+        stroke="white"
+        strokeWidth="3"
+        strokeDasharray={`${2 * Math.PI * 28}`}
+        strokeDashoffset={`${
+          2 * Math.PI * 28 * (1 - progress / 100)
+        }`}
+        style={{
+          transition: "stroke-dashoffset 0.1s linear",
+        }}
+      />
+    </svg>
+  )}
 
+  {/* main marker button slightly inset so ring is visible */}
+  <button
+    onClick={() => onMarkerClick(brief.id)}
+    title={`${brief.name} – ${brief.clientName}`}
+    style={{
+      position: "absolute",
+      inset: "6px",             // <— smaller than 60 so ring peeks out
+      borderRadius: "50%",
+      background: isUrgent
+        ? "linear-gradient(135deg, #ef4444, #dc2626)"
+        : "linear-gradient(135deg, #3b82f6, #2563eb)",
+      border: "3px solid white",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "white",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+      transition: "transform 0.2s",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = "scale(1.1)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
+  >
+    <span
+      style={{
+        fontSize: "1.4rem",
+        lineHeight: 1,
+        textShadow: "0 1px 2px rgba(0,0,0,0.7)",
+      }}
+    >
+      {icon}
+    </span>
+  </button>
+</div>
               {/* main marker button */}
               <button
                 onClick={() => onMarkerClick(brief.id)}
