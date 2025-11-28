@@ -44,7 +44,6 @@ const RadarChart: React.FC<{
   const centerY = 50;
   const radius = 40;
 
-  // derive colours based on outcome
   const outcomeIsSuccess = outcomeMessage?.startsWith("✅") ?? false;
   const outcomeIsFail = outcomeMessage?.startsWith("❌") ?? false;
 
@@ -60,50 +59,41 @@ const RadarChart: React.FC<{
     ? "rgba(248, 113, 113, 0.35)"
     : "rgba(59, 130, 246, 0.25)";
 
-  // normalise values so both shapes fit nicely
-  const maxValue = STAT_KEYS.reduce((max, key) => {
-    return Math.max(
-      max,
-      required[key],
-      team[key] || 0
-    );
-  }, 1);
+  const maxValue = Math.max(
+    ...STAT_KEYS.map((key) => Math.max(required[key], team[key] || 0))
+  );
 
-  const toPoint = (value: number, index: number, total: number): string => {
-    const angle = (2 * Math.PI * index) / total - Math.PI / 2;
+  const toPoint = (value: number, index: number): string => {
+    const angle = (2 * Math.PI * index) / STAT_KEYS.length - Math.PI / 2;
     const r = (value / maxValue) * radius;
     const x = centerX + r * Math.cos(angle);
     const y = centerY + r * Math.sin(angle);
     return `${x},${y}`;
   };
 
-  const requiredPoints = STAT_KEYS.map((k, i) =>
-    toPoint(required[k], i, STAT_KEYS.length)
-  ).join(" ");
-  const teamPoints = STAT_KEYS.map((k, i) =>
-    toPoint(team[k] || 0, i, STAT_KEYS.length)
-  ).join(" ");
+  const requiredPoints = STAT_KEYS.map((k, i) => toPoint(required[k], i)).join(" ");
+  const teamPoints = STAT_KEYS.map((k, i) => toPoint(team[k] || 0, i)).join(" ");
 
   return (
     <svg viewBox="0 0 100 100">
-      {/* grid rings */}
-      {[0.25, 0.5, 0.75, 1].map((fraction, idx) => (
+      {[0.25, 0.5, 0.75, 1].map((f, idx) => (
         <polygon
           key={idx}
           fill="none"
           stroke="#1f2937"
           strokeWidth={0.3}
-          points={STAT_KEYS.map((_, i) => {
-            const angle = (2 * Math.PI * i) / STAT_KEYS.length - Math.PI / 2;
-            const r = radius * fraction;
-            const x = centerX + r * Math.cos(angle);
-            const y = centerY + r * Math.sin(angle);
-            return `${x},${y}`;
-          }).join(" ")}
+          points={STAT_KEYS.map((_, i) =>
+            (() => {
+              const angle =
+                (2 * Math.PI * i) / STAT_KEYS.length - Math.PI / 2;
+              const x = centerX + radius * f * Math.cos(angle);
+              const y = centerY + radius * f * Math.sin(angle);
+              return `${x},${y}`;
+            })()
+          ).join(" ")}
         />
       ))}
 
-      {/* spokes */}
       {STAT_KEYS.map((_, i) => {
         const angle = (2 * Math.PI * i) / STAT_KEYS.length - Math.PI / 2;
         const x = centerX + radius * Math.cos(angle);
@@ -121,15 +111,13 @@ const RadarChart: React.FC<{
         );
       })}
 
-      {/* mission polygon */}
       <polygon
         points={requiredPoints}
-        fill="rgba(148, 163, 184, 0.2)"
+        fill="rgba(148,163,184,0.2)"
         stroke="#e5e7eb"
         strokeWidth={0.7}
       />
 
-      {/* team polygon */}
       <polygon
         points={teamPoints}
         fill={teamFill}
@@ -137,7 +125,6 @@ const RadarChart: React.FC<{
         strokeWidth={0.8}
       />
 
-      {/* labels */}
       {STAT_KEYS.map((k, i) => {
         const angle = (2 * Math.PI * i) / STAT_KEYS.length - Math.PI / 2;
         const x = centerX + (radius + 7) * Math.cos(angle);
@@ -160,7 +147,7 @@ const RadarChart: React.FC<{
   );
 };
 
-const BriefModal: React.FC<Props> = ({
+export const BriefModal: React.FC<Props> = ({
   brief,
   consultants,
   selectedIds,
@@ -193,11 +180,6 @@ const BriefModal: React.FC<Props> = ({
     }
     return base;
   }, [selectedTeam]);
-
-  const teamSizeText =
-    brief.minConsultants === brief.maxConsultants
-      ? `${brief.minConsultants} consultant${brief.minConsultants > 1 ? "s" : ""}`
-      : `${brief.minConsultants}–${brief.maxConsultants} consultants`;
 
   const disableDispatch =
     selectedIds.length < brief.minConsultants ||
@@ -232,39 +214,32 @@ const BriefModal: React.FC<Props> = ({
           overflow: "hidden",
         }}
       >
-        {/* left column – brief and team selection */}
+        {/* LEFT SIDE */}
         <div
           style={{
-            padding: "1.4rem 1.4rem 1rem 1.4rem",
+            padding: "1.4rem",
             borderRight: "1px solid rgba(30,64,175,0.75)",
             display: "flex",
             flexDirection: "column",
-            gap: "0.9rem",
+            gap: "1rem",
           }}
         >
           <header
             style={{
               display: "flex",
               justifyContent: "space-between",
-              gap: "0.75rem",
               alignItems: "flex-start",
             }}
           >
             <div>
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: "1.4rem",
-                  fontWeight: 600,
-                }}
-              >
+              <h2 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 600 }}>
                 {brief.name}
               </h2>
               <div
                 style={{
-                  marginTop: "0.25rem",
                   fontSize: "0.85rem",
                   color: "#9ca3af",
+                  marginTop: "0.2rem",
                 }}
               >
                 {brief.clientName} • {brief.difficultyLabel}
@@ -297,10 +272,9 @@ const BriefModal: React.FC<Props> = ({
             {brief.description}
           </p>
 
-          {/* required skills panel */}
+          {/* REQUIRED SKILLS */}
           <div
             style={{
-              marginTop: "0.5rem",
               padding: "0.8rem 0.9rem",
               borderRadius: "0.75rem",
               border: "1px solid rgba(30,64,175,0.8)",
@@ -320,6 +294,7 @@ const BriefModal: React.FC<Props> = ({
             >
               Required skills
             </div>
+
             <div
               style={{
                 display: "flex",
@@ -329,25 +304,22 @@ const BriefModal: React.FC<Props> = ({
             >
               {STAT_KEYS.map((key) => (
                 <div key={key}>
-                  <span style={{ color: "#9ca3af" }}>
-                    {STAT_LABELS[key]}:
-                  </span>{" "}
+                  <span style={{ color: "#9ca3af" }}>{STAT_LABELS[key]}:</span>{" "}
                   <span>{requiredStats[key]}</span>
                 </div>
               ))}
             </div>
-            <div
-              style={{
-                marginTop: "0.4rem",
-                color: "#9ca3af",
-              }}
-            >
-              Team size: {teamSizeText}
+
+            <div style={{ marginTop: "0.4rem", color: "#9ca3af" }}>
+              Team size:{" "}
+              {brief.minConsultants === brief.maxConsultants
+                ? brief.minConsultants
+                : `${brief.minConsultants}–${brief.maxConsultants}`}
             </div>
           </div>
 
-          {/* select team via avatars */}
-          <div style={{ marginTop: "0.5rem" }}>
+          {/* SELECT TEAM – AVATARS ONLY */}
+          <div>
             <div
               style={{
                 fontSize: "0.8rem",
@@ -357,6 +329,7 @@ const BriefModal: React.FC<Props> = ({
             >
               Select your team:
             </div>
+
             <div
               style={{
                 display: "flex",
@@ -399,7 +372,6 @@ const BriefModal: React.FC<Props> = ({
                         height: "100%",
                         borderRadius: "999px",
                         objectFit: "cover",
-                        display: "block",
                       }}
                     />
                   </button>
@@ -408,7 +380,7 @@ const BriefModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* footer */}
+          {/* DISPATCH */}
           <div
             style={{
               marginTop: "auto",
@@ -424,13 +396,14 @@ const BriefModal: React.FC<Props> = ({
               Selected: <strong>{selectedIds.length}</strong> /{" "}
               {brief.maxConsultants}
             </div>
+
             <button
               onClick={onDispatch}
               disabled={disableDispatch}
               style={{
                 padding: "0.55rem 1.3rem",
                 borderRadius: "999px",
-                border: "1px solid transparent",
+                border: "1px солид-transparent",
                 background: disableDispatch
                   ? "rgba(30,64,175,0.5)"
                   : "linear-gradient(to right, #22c55e, #16a34a)",
@@ -459,10 +432,10 @@ const BriefModal: React.FC<Props> = ({
           )}
         </div>
 
-        {/* right column – radar */}
+        {/* RIGHT SIDE – RADAR */}
         <div
           style={{
-            padding: "1.4rem 1.2rem 1.2rem 1.0rem",
+            padding: "1.4rem",
             display: "flex",
             flexDirection: "column",
             gap: "0.75rem",
@@ -480,6 +453,7 @@ const BriefModal: React.FC<Props> = ({
           >
             Fit to brief
           </div>
+
           <div
             style={{
               fontSize: "0.75rem",
@@ -487,9 +461,10 @@ const BriefModal: React.FC<Props> = ({
               marginBottom: "0.2rem",
             }}
           >
-            Build a team whose shape overlaps the mission polygon as much as
-            possible. Green means a success, red means a miss.
+            This chart shows how well your team shape overlaps the mission
+            shape. Green means success, red means failure.
           </div>
+
           <div
             style={{
               flexGrow: 1,
@@ -497,7 +472,7 @@ const BriefModal: React.FC<Props> = ({
               borderRadius: "0.9rem",
               border: "1px solid rgba(30,64,175,0.8)",
               background: "radial-gradient(circle at center, #020617, #020617)",
-              padding: "0.35rem",
+              padding: "0.4rem",
             }}
           >
             <RadarChart
@@ -511,5 +486,3 @@ const BriefModal: React.FC<Props> = ({
     </div>
   );
 };
-
-export default BriefModal;
