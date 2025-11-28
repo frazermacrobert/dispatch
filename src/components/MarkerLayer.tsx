@@ -5,36 +5,17 @@ const getBriefIcon = (brief: ActiveBrief): string => {
   const id = brief.id.toLowerCase();
   const name = brief.name.toLowerCase();
 
-  // behaviour / culture type work
-  if (id.includes("behaviour") || id.includes("culture")) {
-    return "📧";
-  }
+  if (id.includes("behaviour") || id.includes("culture")) return "👥";
+  if (id.includes("learning") || id.includes("development")) return "📘";
+  if (id.includes("design") || id.includes("motion") || name.includes("film"))
+    return "✦";
+  if (id.includes("audit") || id.includes("research") || id.includes("insights"))
+    return "📊";
+  if (id.includes("strategy") || id.includes("brand")) return "♟";
 
-  // learning and development
-  if (id.includes("learning") || id.includes("development")) {
-    return "⚠️";
-  }
-
-  // design / motion / creative
-  if (id.includes("design") || id.includes("motion") || name.includes("film")) {
-    return "⚠️";
-  }
-
-  // audits / research / insights
-  if (id.includes("audit") || id.includes("research") || id.includes("insights")) {
-    return "⚠️";
-  }
-
-  // strategy / brand
-  if (id.includes("strategy") || id.includes("brand")) {
-    return "⚠️";
-  }
-
-  // fallback by difficulty
-  if (brief.difficultyLabel === "High stakes") return "⚠️";
-  if (brief.difficultyLabel === "Standard") return "⚠️";
-
-  return "📧";
+  if (brief.difficultyLabel === "High stakes") return "!";
+  if (brief.difficultyLabel === "Standard") return "●";
+  return "○";
 };
 
 export const MarkerLayer: React.FC<{
@@ -75,7 +56,7 @@ export const MarkerLayer: React.FC<{
               textAlign: "center",
             }}
           >
-            {/* Pulsing outer ring */}
+            {/* pulsing outer ring */}
             <div
               style={{
                 position: "absolute",
@@ -92,85 +73,93 @@ export const MarkerLayer: React.FC<{
               }}
             />
 
-            {/* Main marker button – icon only */}
-            <button
-              onClick={() => onMarkerClick(brief.id)}
-              title={`${brief.name} – ${brief.clientName}`}
+            {/* shared container for button + svg so they align perfectly */}
+            <div
               style={{
                 position: "relative",
                 width: "60px",
                 height: "60px",
-                borderRadius: "50%",
-                background: isUrgent
-                  ? "linear-gradient(135deg, #ef4444, #dc2626)"
-                  : "linear-gradient(135deg, #3b82f6, #2563eb)",
-                border: "3px solid white",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
-                transition: "transform 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
+                margin: "0 auto",
               }}
             >
-              <span
+              {/* progress ring */}
+              {brief.timeLimitMs !== Infinity && (
+                <svg
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    transform: "rotate(-90deg)",
+                    width: "60px",
+                    height: "60px",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <circle
+                    cx="30"
+                    cy="30"
+                    r="26"
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.3)"
+                    strokeWidth="3"
+                  />
+                  <circle
+                    cx="30"
+                    cy="30"
+                    r="26"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="3"
+                    strokeDasharray={`${2 * Math.PI * 26}`}
+                    strokeDashoffset={`${
+                      2 * Math.PI * 26 * (1 - progress / 100)
+                    }`}
+                    style={{
+                      transition: "stroke-dashoffset 0.1s linear",
+                    }}
+                  />
+                </svg>
+              )}
+
+              {/* main marker button */}
+              <button
+                onClick={() => onMarkerClick(brief.id)}
+                title={`${brief.name} – ${brief.clientName}`}
                 style={{
-                  fontSize: "1.4rem",
-                  lineHeight: 1,
-                  textShadow: "0 1px 2px rgba(0,0,0,0.7)",
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: "50%",
+                  background: isUrgent
+                    ? "linear-gradient(135deg, #ef4444, #dc2626)"
+                    : "linear-gradient(135deg, #3b82f6, #2563eb)",
+                  border: "3px solid white",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "white",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+                  transition: "transform 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
                 }}
               >
-                {icon}
-              </span>
-            </button>
+                <span
+                  style={{
+                    fontSize: "1.4rem",
+                    lineHeight: 1,
+                    textShadow: "0 1px 2px rgba(0,0,0,0.7)",
+                  }}
+                >
+                  {icon}
+                </span>
+              </button>
+            </div>
 
-           {/* Progress ring */}
-{brief.timeLimitMs !== Infinity && (
-  <svg
-    style={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%) rotate(-90deg)",
-      width: "60px",
-      height: "60px",
-      pointerEvents: "none",
-    }}
-  >
-    {/* background track */}
-    <circle
-      cx="30"
-      cy="30"
-      r="26"
-      fill="none"
-      stroke="rgba(255, 255, 255, 0.3)"
-      strokeWidth="3"
-    />
-    {/* foreground progress */}
-    <circle
-      cx="30"
-      cy="30"
-      r="26"
-      fill="none"
-      stroke="white"
-      strokeWidth="3"
-      strokeDasharray={`${2 * Math.PI * 26}`}
-      strokeDashoffset={`${2 * Math.PI * 26 * (1 - progress / 100)}`}
-      style={{
-        transition: "stroke-dashoffset 0.1s linear",
-      }}
-    />
-  </svg>
-)}
-
-            {/* Timer text below circle */}
+            {/* timer text below */}
             {brief.timeLimitMs !== Infinity && (
               <div
                 style={{
