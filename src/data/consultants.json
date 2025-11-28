@@ -4,10 +4,10 @@
     "name": "Frazer",
     "tag": "Sparkle",
     "stats": {
-      "charisma": 4,
+      "charisma": 3,
       "intelligence": 3,
       "speed": 6,
-      "strategy": 3,
+      "strategy": 2,
       "innovation": 7
     }
   },
@@ -16,8 +16,8 @@
     "name": "Craig",
     "tag": "Design",
     "stats": {
-      "charisma": 3,
-      "intelligence": 3,
+      "charisma": 2,
+      "intelligence": 2,
       "speed": 6,
       "strategy": 3,
       "innovation": 6
@@ -29,8 +29,8 @@
     "tag": "Vision/EVP/Mission",
     "stats": {
       "charisma": 3,
-      "intelligence": 6,
-      "speed": 2,
+      "intelligence": 5,
+      "speed": 1,
       "strategy": 6,
       "innovation": 2
     }
@@ -42,9 +42,9 @@
     "stats": {
       "charisma": 3,
       "intelligence": 2,
-      "speed": 4,
+      "speed": 2,
       "strategy": 2,
-      "innovation": 5
+      "innovation": 2
     }
   },
   {
@@ -52,10 +52,10 @@
     "name": "Hayley",
     "tag": "Recognition & Reward",
     "stats": {
-      "charisma": 6,
+      "charisma": 4,
       "intelligence": 3,
-      "speed": 2,
-      "strategy": 3,
+      "speed": 1,
+      "strategy": 4,
       "innovation": 2
     }
   },
@@ -64,11 +64,11 @@
     "name": "Ste",
     "tag": "Copywriting",
     "stats": {
-      "charisma": 4,
+      "charisma": 3,
       "intelligence": 3,
-      "speed": 3,
+      "speed": 2,
       "strategy": 3,
-      "innovation": 3
+      "innovation": 1
     }
   },
   {
@@ -80,7 +80,7 @@
       "intelligence": 3,
       "speed": 3,
       "strategy": 4,
-      "innovation": 3
+      "innovation": 2
     }
   },
   {
@@ -90,9 +90,9 @@
     "stats": {
       "charisma": 2,
       "intelligence": 4,
-      "speed": 2,
-      "strategy": 5,
-      "innovation": 2
+      "speed": 1,
+      "strategy": 4,
+      "innovation": 1
     }
   },
   {
@@ -104,7 +104,7 @@
       "intelligence": 7,
       "speed": 1,
       "strategy": 6,
-      "innovation": 2
+      "innovation": 1
     }
   },
   {
@@ -115,8 +115,8 @@
       "charisma": 5,
       "intelligence": 3,
       "speed": 4,
-      "strategy": 4,
-      "innovation": 4
+      "strategy": 3,
+      "innovation": 2
     }
   },
   {
@@ -124,11 +124,11 @@
     "name": "Lucy",
     "tag": "Generalist",
     "stats": {
-      "charisma": 5,
-      "intelligence": 5,
-      "speed": 5,
-      "strategy": 5,
-      "innovation": 4
+      "charisma": 4,
+      "intelligence": 4,
+      "speed": 3,
+      "strategy": 4,
+      "innovation": 3
     }
   }
 ]
