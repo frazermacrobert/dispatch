@@ -1,0 +1,9 @@
+{
+  "totalBriefs": 20,
+  "initialDelayMs": 3000,
+  "intervalRangeMs": [
+    6000,
+    12000
+  ],
+  "cooldownMs": 7000
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "brand-strategy",
+    "name": "Brand strategy reboot",
+    "description": "Client wants to redraw the company narrative.",
+    "difficultyLabel": "High stakes",
+    "requirements": {
+      "charisma": 7,
+      "intelligence": 9,
+      "speed": 4,
+      "strategy": 9,
+      "innovation": 7
+    },
+    "minConsultants": 2,
+    "maxConsultants": 3,
+    "autoWinConsultantId": "al"
+  }
+]

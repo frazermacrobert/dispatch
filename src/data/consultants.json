@@ -1,0 +1,28 @@
+[
+  {
+    "id": "frazer",
+    "name": "Frazer",
+    "tag": "Sparkle",
+    "stats": {
+      "charisma": 9,
+      "intelligence": 7,
+      "speed": 6,
+      "strategy": 7,
+      "innovation": 8
+    },
+    "state": "available"
+  },
+  {
+    "id": "craig",
+    "name": "Craig",
+    "tag": "Design",
+    "stats": {
+      "charisma": 6,
+      "intelligence": 7,
+      "speed": 5,
+      "strategy": 6,
+      "innovation": 9
+    },
+    "state": "available"
+  }
+]
