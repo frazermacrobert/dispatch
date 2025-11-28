@@ -11,7 +11,7 @@
       "strategy": 9,
       "innovation": 7
     },
-    "minConsultants": 2,
+    "minConsultants": 1,
     "maxConsultants": 3,
     "autoWinConsultantId": "al"
   },
@@ -27,7 +27,7 @@
       "strategy": 8,
       "innovation": 6
     },
-    "minConsultants": 2,
+    "minConsultants": 1,
     "maxConsultants": 3,
     "autoWinConsultantId": "rachel"
   },
@@ -91,7 +91,7 @@
       "strategy": 7,
       "innovation": 6
     },
-    "minConsultants": 2,
+    "minConsultants": 1,
     "maxConsultants": 3,
     "autoWinConsultantId": "hayley"
   },
@@ -107,7 +107,7 @@
       "strategy": 10,
       "innovation": 6
     },
-    "minConsultants": 2,
+    "minConsultants": 1,
     "maxConsultants": 3,
     "autoWinConsultantId": "rachel"
   },
@@ -123,9 +123,9 @@
       "strategy": 8,
       "innovation": 7
     },
-    "minConsultants": 2,
+    "minConsultants": 1,
     "maxConsultants": 3,
-    "autoWinConsultantId": "jo"
+    "autoWinConsultantId": "frazer"
   },
   {
     "id": "ic-audit",
@@ -155,8 +155,8 @@
       "strategy": 7,
       "innovation": 7
     },
-    "minConsultants": 2,
+    "minConsultants": 1,
     "maxConsultants": 3,
-    "autoWinConsultantId": "alex"
+    "autoWinConsultantId": "lucy"
   }
 ]
