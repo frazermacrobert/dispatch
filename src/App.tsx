@@ -8,6 +8,9 @@ import { ConsultantBar } from "./components/ConsultantBar";
 import { MarkerLayer } from "./components/MarkerLayer";
 import { BriefModal } from "./components/BriefModal";
 
+// import the start background image from public/
+import startBg from "/startbg.png";
+
 type GamePhase = "intro" | "playing" | "ended";
 
 const App: React.FC = () => {
@@ -20,7 +23,7 @@ const App: React.FC = () => {
   const [successCount, setSuccessCount] = useState(0);
   const [failCount, setFailCount] = useState(0);
   const [outcomeMessage, setOutcomeMessage] = useState<string | null>(null);
-  
+
   const timerIntervalRef = useRef<number | null>(null);
   const spawnTimeoutRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
@@ -45,7 +48,7 @@ const App: React.FC = () => {
     setSelectedBriefId(null);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    
+
     // Spawn first brief after initial delay
     spawnTimeoutRef.current = window.setTimeout(() => {
       spawnBrief(true);
@@ -60,7 +63,7 @@ const App: React.FC = () => {
 
     const archetype = briefsData[Math.floor(Math.random() * briefsData.length)];
     const newBrief = createBriefInstance(archetype, briefsSpawned);
-    
+
     // First brief has no timer, others do
     if (isFirst) {
       newBrief.timeLimitMs = Infinity;
@@ -92,7 +95,7 @@ const App: React.FC = () => {
           if (b.remainingMs === Infinity) return b;
 
           const newRemaining = Math.max(0, b.remainingMs - 100);
-          
+
           // Timer expired
           if (newRemaining === 0 && b.remainingMs > 0) {
             setFailCount((c) => c + 1);
@@ -108,11 +111,11 @@ const App: React.FC = () => {
         prev.map((c) => {
           if (c.state !== "cooldown") return c;
           const newCooldown = Math.max(0, (c.cooldownMs || 0) - 100);
-          
+
           if (newCooldown === 0) {
             return { ...c, state: "available", cooldownMs: 0 };
           }
-          
+
           return { ...c, cooldownMs: newCooldown };
         })
       );
@@ -126,7 +129,7 @@ const App: React.FC = () => {
   // Check if game should end
   useEffect(() => {
     if (phase !== "playing") return;
-    
+
     const allResolved = briefs.every((b) => b.status !== "pending");
     if (briefsSpawned >= spawnConfig.totalBriefs && allResolved) {
       setPhase("ended");
@@ -160,7 +163,7 @@ const App: React.FC = () => {
     if (!brief) return;
 
     const isSelected = selectedConsultantIds.includes(consultantId);
-    
+
     if (isSelected) {
       setSelectedConsultantIds((prev) => prev.filter((id) => id !== consultantId));
     } else {
@@ -224,27 +227,49 @@ const App: React.FC = () => {
   const selectedBrief = briefs.find((b) => b.id === selectedBriefId);
 
   return (
-    <div style={{ 
-      width: "100vw", 
-      height: "100vh", 
-      position: "relative",
-      background: "linear-gradient(to bottom, #0f172a, #1e293b)",
-      overflow: "hidden",
-      fontFamily: "system-ui, -apple-system, sans-serif"
-    }}>
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        position: "relative",
+        background:
+          phase === "intro"
+            ? `linear-gradient(to bottom, rgba(15,23,42,0.4), rgba(15,23,42,0.9)), url(${startBg})`
+            : "linear-gradient(to bottom, #0f172a, #1e293b)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        overflow: "hidden",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+      }}
+    >
       {phase === "intro" && (
-        <div style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-          color: "white",
-        }}>
-          <h1 style={{ fontSize: "3rem", marginBottom: "1rem", fontWeight: 700 }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            color: "white",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "3rem",
+              marginBottom: "1rem",
+              fontWeight: 700,
+              letterSpacing: "0.2em",
+            }}
+          >
             DISPATCH
           </h1>
-          <p style={{ fontSize: "1.2rem", marginBottom: "2rem", opacity: 0.8 }}>
+          <p
+            style={{
+              fontSize: "1.2rem",
+              marginBottom: "2rem",
+              opacity: 0.85,
+            }}
+          >
             Agency Edition
           </p>
           <button
@@ -268,19 +293,21 @@ const App: React.FC = () => {
       {phase === "playing" && (
         <>
           {/* Status bar */}
-          <div style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            padding: "1rem 2rem",
-            background: "rgba(15, 23, 42, 0.9)",
-            color: "white",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            zIndex: 100,
-          }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              padding: "1rem 2rem",
+              background: "rgba(15, 23, 42, 0.9)",
+              color: "white",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              zIndex: 100,
+            }}
+          >
             <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>
               Briefs: {briefsSpawned} / {spawnConfig.totalBriefs}
             </div>
@@ -315,31 +342,50 @@ const App: React.FC = () => {
       )}
 
       {phase === "ended" && (
-        <div style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-          color: "white",
-          background: "rgba(15, 23, 42, 0.95)",
-          padding: "3rem",
-          borderRadius: "1rem",
-          minWidth: "400px",
-        }}>
-          <h1 style={{ fontSize: "2.5rem", marginBottom: "2rem", fontWeight: 700 }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            color: "white",
+            background: "rgba(15, 23, 42, 0.95)",
+            padding: "3rem",
+            borderRadius: "1rem",
+            minWidth: "400px",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "2.5rem",
+              marginBottom: "2rem",
+              fontWeight: 700,
+            }}
+          >
             Game Complete
           </h1>
           <div style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>
-            <span style={{ color: "#10b981", fontWeight: 600 }}>{successCount}</span>
+            <span style={{ color: "#10b981", fontWeight: 600 }}>
+              {successCount}
+            </span>
             {" successful missions"}
           </div>
           <div style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>
-            <span style={{ color: "#ef4444", fontWeight: 600 }}>{failCount}</span>
+            <span style={{ color: "#ef4444", fontWeight: 600 }}>
+              {failCount}
+            </span>
             {" failed missions"}
           </div>
-          <div style={{ fontSize: "1.2rem", marginBottom: "2rem", opacity: 0.7 }}>
-            Success rate: {((successCount / spawnConfig.totalBriefs) * 100).toFixed(1)}%
+          <div
+            style={{
+              fontSize: "1.2rem",
+              marginBottom: "2rem",
+              opacity: 0.7,
+            }}
+          >
+            Success rate:{" "}
+            {((successCount / spawnConfig.totalBriefs) * 100).toFixed(1)}%
           </div>
           <button
             onClick={startGame}
