@@ -10,7 +10,7 @@ import { MarkerLayer } from "./components/MarkerLayer";
 import { BriefModal } from "./components/BriefModal";
 import PauseMenu from "./components/PauseMenu";
 
-// import the start background image from public/
+// start background from public/
 import startBg from "/startbg.png";
 
 type GamePhase = "intro" | "playing" | "ended";
@@ -26,14 +26,18 @@ const App: React.FC = () => {
   const [successCount, setSuccessCount] = useState(0);
   const [failCount, setFailCount] = useState(0);
   const [outcomeMessage, setOutcomeMessage] = useState<string | null>(null);
-
   const [spawnDelay, setSpawnDelay] = useState<number | null>(null);
+
+  // extras / options (logic not wired in yet)
+  const [showExtras, setShowExtras] = useState(false);
+  const [randomiseTeam, setRandomiseTeam] = useState(false);
+  const [briefsExpire, setBriefsExpire] = useState(true);
 
   const timerIntervalRef = useRef<number | null>(null);
   const spawnTimeoutRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
 
-  // Initialize consultants
+  // initialise consultants
   useEffect(() => {
     const initial: Consultant[] = consultantsData.map((c) => ({
       ...c,
@@ -43,11 +47,12 @@ const App: React.FC = () => {
     setConsultants(initial);
   }, []);
 
-  // Start game
+  // start game
   const startGame = () => {
     setPhase("playing");
     setIsPaused(false);
     isPausedRef.current = false;
+    setShowExtras(false);
 
     setBriefsSpawned(0);
     setSuccessCount(0);
@@ -57,7 +62,7 @@ const App: React.FC = () => {
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
 
-    // start the spawn timer for ongoing briefs
+    // spawn timer for ongoing briefs
     const [min, max] = spawnConfig.intervalRangeMs;
     setSpawnDelay(min + Math.random() * (max - min));
 
@@ -70,7 +75,7 @@ const App: React.FC = () => {
     }, spawnConfig.initialDelayMs);
   };
 
-  // Spawn a new brief
+  // spawn a new brief
   const spawnBrief = (isFirst: boolean = false) => {
     if (briefsSpawned >= spawnConfig.totalBriefs) {
       setSpawnDelay(null);
@@ -80,7 +85,6 @@ const App: React.FC = () => {
     const archetype = briefsData[Math.floor(Math.random() * briefsData.length)];
     const newBrief = createBriefInstance(archetype, briefsSpawned);
 
-    // first brief has no timer, others do
     if (isFirst) {
       newBrief.timeLimitMs = Infinity;
       newBrief.remainingMs = Infinity;
@@ -92,26 +96,24 @@ const App: React.FC = () => {
 
   useInterval(
     spawnBrief,
-    // delay in ms or null to pause
     isPaused ? null : spawnDelay
   );
 
-  // Timer tick (100ms intervals)
+  // timer tick (100ms)
   useEffect(() => {
     if (phase !== "playing") return;
 
     timerIntervalRef.current = window.setInterval(() => {
       if (isPausedRef.current || isPaused) return;
 
-      // Update brief timers
+      // brief timers
       setBriefs((prev) =>
         prev.map((b) => {
           if (b.status !== "pending") return b;
-          if (b.remainingMs === Infinity) return b;
+          if (!briefsExpire || b.remainingMs === Infinity) return b;
 
           const newRemaining = Math.max(0, b.remainingMs - 100);
 
-          // timer expired
           if (newRemaining === 0 && b.remainingMs > 0) {
             setFailCount((c) => c + 1);
             return { ...b, remainingMs: 0, status: "failed" as const };
@@ -121,7 +123,7 @@ const App: React.FC = () => {
         })
       );
 
-      // Update consultant cooldowns
+      // consultant cooldowns
       setConsultants((prev) =>
         prev.map((c) => {
           if (c.state !== "cooldown") return c;
@@ -139,9 +141,9 @@ const App: React.FC = () => {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [phase, isPaused]);
+  }, [phase, isPaused, briefsExpire]);
 
-  // Check if game should end
+  // end condition
   useEffect(() => {
     if (phase !== "playing") return;
 
@@ -151,25 +153,23 @@ const App: React.FC = () => {
     }
   }, [briefs, briefsSpawned, phase]);
 
-  // Open brief modal
+  // marker click
   const handleMarkerClick = (briefId: string) => {
     setSelectedBriefId(briefId);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    isPausedRef.current = true; // pause all timers
+    isPausedRef.current = true;
   };
 
-  // Close modal
   const handleCloseModal = () => {
     setSelectedBriefId(null);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    isPausedRef.current = false; // resume timers
+    isPausedRef.current = false;
   };
 
-  // Toggle consultant selection
   const handleToggleConsultant = (consultantId: string) => {
-    if (outcomeMessage) return; // cannot change after dispatch
+    if (outcomeMessage) return;
 
     const consultant = consultants.find((c) => c.id === consultantId);
     if (!consultant || consultant.state === "cooldown") return;
@@ -187,7 +187,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Dispatch team
   const handleDispatch = () => {
     if (!selectedBriefId || selectedConsultantIds.length === 0) return;
 
@@ -200,9 +199,10 @@ const App: React.FC = () => {
     }
 
     const team = consultants.filter((c) => selectedConsultantIds.includes(c.id));
+
+    // later: hook in randomiseTeam behaviour here
     const outcome = evaluateMissionOutcome(brief, team);
 
-    // Update brief status
     setBriefs((prev) =>
       prev.map((b) =>
         b.id === selectedBriefId
@@ -211,14 +211,12 @@ const App: React.FC = () => {
       )
     );
 
-    // Update counts
     if (outcome.success) {
       setSuccessCount((c) => c + 1);
     } else {
       setFailCount((c) => c + 1);
     }
 
-    // Put consultants on cooldown
     setConsultants((prev) =>
       prev.map((c) =>
         selectedConsultantIds.includes(c.id)
@@ -233,7 +231,6 @@ const App: React.FC = () => {
         : `❌ FAILED. ${outcome.explanation}`
     );
 
-    // Auto close after 3 seconds
     setTimeout(() => {
       handleCloseModal();
     }, 3000);
@@ -266,7 +263,7 @@ const App: React.FC = () => {
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
-      {/* world backdrop only after intro */}
+      {/* world map only after intro */}
       {phase !== "intro" && (
         <>
           <div className="world-map" />
@@ -274,59 +271,301 @@ const App: React.FC = () => {
         </>
       )}
 
+      {/* INTRO / TITLE SCREEN */}
       {phase === "intro" && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            textAlign: "center",
-            color: "white",
-          }}
-        >
-          <h1
+        <>
+          {/* subtle dark gradient at bottom for menu */}
+          <div
             style={{
-              fontSize: "3rem",
-              marginBottom: "1rem",
-              fontWeight: 700,
-              letterSpacing: "0.2em",
+              position: "absolute",
+              inset: "55% 0 0 0",
+              background:
+                "linear-gradient(to top, rgba(15,23,42,0.95), transparent)",
             }}
-          >
-            DISPATCH
-          </h1>
-          <p
+          />
+
+          {/* title block bottom left */}
+          <div
             style={{
-              fontSize: "1.2rem",
-              marginBottom: "2rem",
-              opacity: 0.85,
-            }}
-          >
-            Agency Edition
-          </p>
-          <button
-            onClick={startGame}
-            style={{
-              padding: "1rem 2rem",
-              fontSize: "1.2rem",
-              background: "#3b82f6",
+              position: "absolute",
+              left: "3rem",
+              bottom: "7rem",
               color: "white",
-              border: "none",
-              borderRadius: "0.5rem",
-              cursor: "pointer",
-              fontWeight: 600,
             }}
           >
-            Start Game
-          </button>
-        </div>
+            <div
+              style={{
+                fontSize: "0.9rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                opacity: 0.8,
+                marginBottom: "0.25rem",
+              }}
+            >
+              Scarletabbott presents
+            </div>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: "2.6rem",
+                fontWeight: 800,
+                letterSpacing: "0.4em",
+              }}
+            >
+              DISPATCH
+            </h1>
+            <div
+              style={{
+                fontSize: "1rem",
+                marginTop: "0.3rem",
+                opacity: 0.85,
+              }}
+            >
+              Agency Edition
+            </div>
+          </div>
+
+          {/* main menu buttons bottom left */}
+          <div
+            style={{
+              position: "absolute",
+              left: "3rem",
+              bottom: "2.5rem",
+              display: "flex",
+              gap: "1rem",
+            }}
+          >
+            <button
+              onClick={startGame}
+              style={{
+                minWidth: "140px",
+                padding: "0.9rem 1.8rem",
+                borderRadius: "999px",
+                border: "1px solid rgba(59,130,246,0.8)",
+                background:
+                  "linear-gradient(to bottom, #3b82f6, #2563eb)",
+                color: "white",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                boxShadow: "0 10px 30px rgba(15,23,42,0.7)",
+              }}
+            >
+              Play
+            </button>
+
+            <button
+              onClick={() => setShowExtras(true)}
+              style={{
+                minWidth: "140px",
+                padding: "0.9rem 1.6rem",
+                borderRadius: "999px",
+                border: "1px solid rgba(148,163,184,0.7)",
+                background: "rgba(15,23,42,0.85)",
+                color: "#e5e7eb",
+                fontWeight: 500,
+                fontSize: "0.9rem",
+                cursor: "pointer",
+                boxShadow: "0 10px 30px rgba(15,23,42,0.7)",
+              }}
+            >
+              Extras
+            </button>
+          </div>
+
+          {/* extras popup */}
+          {showExtras && (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(15,23,42,0.7)",
+                backdropFilter: "blur(4px)",
+                zIndex: 20,
+              }}
+            >
+              <div
+                style={{
+                  width: "380px",
+                  maxWidth: "90vw",
+                  borderRadius: "1rem",
+                  background:
+                    "radial-gradient(circle at top, rgba(148,163,184,0.2), transparent), rgba(15,23,42,0.98)",
+                  border: "1px solid rgba(148,163,184,0.4)",
+                  boxShadow: "0 18px 50px rgba(15,23,42,0.9)",
+                  padding: "1.25rem 1.3rem",
+                  color: "#e5e7eb",
+                  fontSize: "0.9rem",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "0.75rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.9rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.16em",
+                      color: "#9ca3af",
+                    }}
+                  >
+                    Extras
+                  </div>
+                  <button
+                    onClick={() => setShowExtras(false)}
+                    style={{
+                      borderRadius: "999px",
+                      border: "1px solid rgba(148,163,184,0.6)",
+                      background: "rgba(15,23,42,0.9)",
+                      color: "#e5e7eb",
+                      fontSize: "0.75rem",
+                      padding: "0.25rem 0.6rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.7rem",
+                  }}
+                >
+                  {/* randomise team */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <div>Randomise team</div>
+                      <div
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "#9ca3af",
+                        }}
+                      >
+                        Unlock secret guests and wild teams.
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setRandomiseTeam((v) => !v)}
+                      style={{
+                        padding: "0.35rem 0.9rem",
+                        borderRadius: "999px",
+                        border: "1px solid rgba(148,163,184,0.7)",
+                        background: randomiseTeam
+                          ? "rgba(34,197,94,0.2)"
+                          : "rgba(15,23,42,0.9)",
+                        color: randomiseTeam ? "#4ade80" : "#e5e7eb",
+                        fontSize: "0.8rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {randomiseTeam ? "On" : "Off"}
+                    </button>
+                  </div>
+
+                  {/* briefs expire */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <div>Briefs expire</div>
+                      <div
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "#9ca3af",
+                        }}
+                      >
+                        Turn off timers for a slower planning session.
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setBriefsExpire((v) => !v)}
+                      style={{
+                        padding: "0.35rem 0.9rem",
+                        borderRadius: "999px",
+                        border: "1px solid rgba(148,163,184,0.7)",
+                        background: briefsExpire
+                          ? "rgba(34,197,94,0.2)"
+                          : "rgba(15,23,42,0.9)",
+                        color: briefsExpire ? "#4ade80" : "#e5e7eb",
+                        fontSize: "0.8rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {briefsExpire ? "On" : "Off"}
+                  </button>
+                  </div>
+
+                  {/* patchwork hub */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      borderTop: "1px solid rgba(31,41,55,0.9)",
+                      paddingTop: "0.7rem",
+                      marginTop: "0.2rem",
+                    }}
+                  >
+                    <div>
+                      <div>Patchwork hub</div>
+                      <div
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "#9ca3af",
+                        }}
+                      >
+                        Visit other games and resources.
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => alert("Patchwork hub coming soon")}
+                      style={{
+                        padding: "0.35rem 0.9rem",
+                        borderRadius: "999px",
+                        border: "1px solid rgba(59,130,246,0.8)",
+                        background:
+                          "linear-gradient(to bottom, #3b82f6, #2563eb)",
+                        color: "white",
+                        fontSize: "0.8rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Visit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
+      {/* PLAYING */}
       {phase === "playing" && (
         <>
           {isPaused && <PauseMenu onResume={handleResume} onQuit={handleQuit} />}
 
-          {/* Status bar */}
           <div
             style={{
               position: "absolute",
@@ -356,16 +595,13 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Map with markers */}
           <MarkerLayer
             briefs={briefs.filter((b) => b.status === "pending")}
             onMarkerClick={handleMarkerClick}
           />
 
-          {/* Consultant bar */}
           <ConsultantBar consultants={consultants} />
 
-          {/* Modal */}
           {selectedBrief && (
             <BriefModal
               brief={selectedBrief}
@@ -380,6 +616,7 @@ const App: React.FC = () => {
         </>
       )}
 
+      {/* ENDED */}
       {phase === "ended" && (
         <div
           style={{
