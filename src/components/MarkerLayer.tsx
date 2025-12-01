@@ -47,6 +47,7 @@ export const MarkerLayer: React.FC<{
         return (
           <div
             key={brief.id}
+            className="marker-wrapper"
             style={{
               position: "absolute",
               left: `${brief.mapX}%`,

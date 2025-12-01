@@ -5,5 +5,5 @@
     6000,
     12000
   ],
-  "cooldownMs": 7000
+  "cooldownMs": 20000
 }
