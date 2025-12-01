@@ -10,9 +10,6 @@ import { MarkerLayer } from "./components/MarkerLayer";
 import { BriefModal } from "./components/BriefModal";
 import PauseMenu from "./components/PauseMenu";
 
-// start background from public/
-import startBg from "/startbg.png";
-
 type GamePhase = "intro" | "playing" | "ended";
 
 const App: React.FC = () => {
@@ -260,19 +257,14 @@ const App: React.FC = () => {
 
   return (
     <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        position: "relative",
-        background:
-          phase === "intro"
-            ? `linear-gradient(to bottom, rgba(15,23,42,0.4), rgba(15,23,42,0.9)), url(${startBg})`
-            : "linear-gradient(to bottom, #0f172a, #1e293b)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        overflow: "hidden",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-      }}
+      id="app-root"
+      className={
+        phase === "intro"
+          ? "phase-intro"
+          : phase === "playing"
+          ? "phase-playing"
+          : "phase-ended"
+      }
     >
       {/* world map only after intro */}
       {phase !== "intro" && (
