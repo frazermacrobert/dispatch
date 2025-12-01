@@ -173,6 +173,6 @@ export function createBriefInstance(
     timeLimitMs,
     status: "pending",
     mapX: 15 + Math.random() * 70,
-    mapY: 15 + Math.random() * 70,
+    mapY: 15 + Math.random() * 50,
   };
 }
