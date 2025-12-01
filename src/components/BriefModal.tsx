@@ -345,22 +345,24 @@ export const BriefModal: React.FC<Props> = ({
                 {brief.clientName} • {brief.difficultyLabel}
               </div>
             </div>
-            <button
-              onClick={onClose}
-              disabled={isAnimating}
-              style={{
-                padding: "0.35rem 0.7rem",
-                fontSize: "0.8rem",
-                borderRadius: "999px",
-                border: "1px solid rgba(248,113,113,0.8)",
-                background: "rgba(127,29,29,0.9)",
-                color: "#fee2e2",
-                cursor: isAnimating ? "not-allowed" : "pointer",
-                opacity: isAnimating ? 0.5 : 1,
-              }}
-            >
-              Close
-            </button>
+            {!outcomeMessage && (
+              <button
+                onClick={onClose}
+                disabled={isAnimating}
+                style={{
+                  padding: "0.35rem 0.7rem",
+                  fontSize: "0.8rem",
+                  borderRadius: "999px",
+                  border: "1px solid rgba(248,113,113,0.8)",
+                  background: "rgba(127,29,29,0.9)",
+                  color: "#fee2e2",
+                  cursor: isAnimating ? "not-allowed" : "pointer",
+                  opacity: isAnimating ? 0.5 : 1,
+                }}
+              >
+                Close
+              </button>
+            )}
           </header>
 
           <p
@@ -540,7 +542,21 @@ export const BriefModal: React.FC<Props> = ({
                 fontWeight: 600,
               }}
             >
-              {outcomeMessage}
+              <div>{outcomeMessage}</div>
+              <button
+                onClick={onClose}
+                style={{
+                  marginTop: "0.75rem",
+                  padding: "0.4rem 1rem",
+                  borderRadius: "999px",
+                  border: "1px solid rgba(148, 163, 184, 0.7)",
+                  background: "rgba(30, 41, 59, 0.8)",
+                  color: "#e2e8f0",
+                  cursor: "pointer",
+                }}
+              >
+                OK
+              </button>
             </div>
           )}
         </div>
