@@ -13,7 +13,7 @@ const getBriefIcon = (brief: ActiveBrief): string => {
     return "⚡️";
   if (id.includes("strategy") || id.includes("brand")) return "⚡️";
 
-  if (brief.difficultyLabel === "High stakes") return "⚡️";
+  if (brief.difficultyLabel === "High stakes") return "🔥";
   if (brief.difficultyLabel === "Standard") return "⚡️";
   return "⚡️";
 };
