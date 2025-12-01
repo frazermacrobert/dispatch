@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { ActiveBrief, Consultant } from "../game/types";
 import { STAT_KEYS, STAT_LABELS, StatKey } from "../game/constants";
 
@@ -32,15 +32,16 @@ const RadarChart: React.FC<{
   outcomeMessage: string | null;
   showPassCriteria: boolean;
   isAnimating: boolean;
+  animationComplete: boolean;
   ballPosition: [number, number] | null;
-}> = ({ required, team, outcomeMessage, showPassCriteria, isAnimating, ballPosition }) => {
+}> = ({ required, team, outcomeMessage, showPassCriteria, isAnimating, animationComplete, ballPosition }) => {
   const centerX = 50;
   const centerY = 50;
   const radius = 40;
 
   const outcomeIsSuccess = outcomeMessage?.startsWith("✅") ?? false;
   const outcomeIsFail = outcomeMessage?.startsWith("❌") ?? false;
-  const showRequirements = showPassCriteria || outcomeMessage !== null;
+  const showRequirements = showPassCriteria || isAnimating || animationComplete;
 
   const teamStroke = outcomeIsSuccess
     ? "#22c55e"
@@ -113,8 +114,8 @@ const RadarChart: React.FC<{
           stroke="#e5e7eb"
           strokeWidth={0.7}
           style={{
-            opacity: isAnimating || outcomeMessage ? 1 : 0,
-            transition: "opacity 0.3s ease"
+            opacity: isAnimating || animationComplete ? 1 : 0,
+            transition: "opacity 0.5s ease"
           }}
         />
       )}
@@ -132,17 +133,20 @@ const RadarChart: React.FC<{
           <circle
             cx={ballPosition[0]}
             cy={ballPosition[1]}
-            r={2}
-            fill="rgba(251, 191, 36, 0.3)"
+            r={3}
+            fill="rgba(251, 191, 36, 0.4)"
+            style={{
+              filter: "blur(1px)"
+            }}
           />
           {/* Ball */}
           <circle
             cx={ballPosition[0]}
             cy={ballPosition[1]}
-            r={1.2}
+            r={1.5}
             fill="#fbbf24"
             stroke="#f59e0b"
-            strokeWidth={0.3}
+            strokeWidth={0.4}
           />
         </>
       )}
@@ -180,7 +184,9 @@ export const BriefModal: React.FC<Props> = ({
   showPassCriteria,
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
   const [ballPosition, setBallPosition] = useState<[number, number] | null>(null);
+  const animationFrameRef = useRef<number>();
 
   const selectedTeam = useMemo(
     () => consultants.filter((c) => selectedIds.includes(c.id)),
@@ -209,11 +215,16 @@ export const BriefModal: React.FC<Props> = ({
   useEffect(() => {
     if (!outcomeMessage) {
       setIsAnimating(false);
+      setAnimationComplete(false);
       setBallPosition(null);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
       return;
     }
 
     setIsAnimating(true);
+    setAnimationComplete(false);
     
     const centerX = 50;
     const centerY = 50;
@@ -222,59 +233,67 @@ export const BriefModal: React.FC<Props> = ({
       ...STAT_KEYS.map((key) => Math.max(requiredStats[key], teamStats[key] || 0))
     );
 
-    // Animate ball bouncing around
-    let frame = 0;
-    const totalFrames = 60; // 2 seconds at 30fps
+    // Wheel of Fortune style: fast then slow down
+    const totalDuration = 3000; // 3 seconds total
+    const startTime = Date.now();
     
     const animate = () => {
-      if (frame >= totalFrames) {
-        // Stop at final position
-        return;
-      }
-
-      // Create bouncing motion around the radar
-      const t = frame / totalFrames;
-      const bounces = 8;
-      const angle = t * Math.PI * 2 * bounces + Math.random() * 0.3;
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / totalDuration, 1);
       
-      // Vary the radius to create bounce effect
-      const radiusFactor = 0.3 + Math.abs(Math.sin(t * Math.PI * bounces * 2)) * 0.6;
-      const r = radius * radiusFactor;
+      // Easing function: starts fast, slows down dramatically (like a wheel)
+      const easeOut = 1 - Math.pow(1 - progress, 4);
+      
+      // Total rotations: starts at many, ends at final position
+      const totalRotations = 8;
+      const currentRotation = easeOut * totalRotations;
+      const angle = currentRotation * Math.PI * 2;
+      
+      // Radius varies slightly for visual interest
+      const radiusVariation = Math.sin(currentRotation * Math.PI * 8) * 3;
+      const r = radius * 0.6 + radiusVariation;
       
       const x = centerX + r * Math.cos(angle);
       const y = centerY + r * Math.sin(angle);
       
       setBallPosition([x, y]);
-      frame++;
       
-      requestAnimationFrame(animate);
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+      } else {
+        // Animation complete - set final position
+        setIsAnimating(false);
+        setAnimationComplete(true);
+        
+        // Pick a final position within the required polygon
+        const randomStat = STAT_KEYS[Math.floor(Math.random() * STAT_KEYS.length)];
+        const statIndex = STAT_KEYS.indexOf(randomStat);
+        const finalAngle = (2 * Math.PI * statIndex) / STAT_KEYS.length - Math.PI / 2;
+        
+        const randomRadius = (requiredStats[randomStat] / maxValue) * radius * (0.4 + Math.random() * 0.5);
+        const angleOffset = (Math.random() - 0.5) * 0.8;
+        
+        const finalX = centerX + randomRadius * Math.cos(finalAngle + angleOffset);
+        const finalY = centerY + randomRadius * Math.sin(finalAngle + angleOffset);
+        
+        setBallPosition([finalX, finalY]);
+      }
     };
 
     animate();
 
-    // After animation, set final position
-    setTimeout(() => {
-      // Pick a random point inside the required polygon
-      const randomAngle = Math.random() * Math.PI * 2;
-      const randomStat = STAT_KEYS[Math.floor(Math.random() * STAT_KEYS.length)];
-      const statIndex = STAT_KEYS.indexOf(randomStat);
-      const statAngle = (2 * Math.PI * statIndex) / STAT_KEYS.length - Math.PI / 2;
-      
-      const randomRadius = (requiredStats[randomStat] / maxValue) * radius * (0.3 + Math.random() * 0.7);
-      
-      const finalX = centerX + randomRadius * Math.cos(statAngle + (Math.random() - 0.5) * 0.5);
-      const finalY = centerY + randomRadius * Math.sin(statAngle + (Math.random() - 0.5) * 0.5);
-      
-      setBallPosition([finalX, finalY]);
-      setIsAnimating(false);
-    }, 2000);
-
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
   }, [outcomeMessage, requiredStats, teamStats]);
 
   const disableDispatch =
     selectedIds.length < brief.minConsultants ||
     selectedIds.length > brief.maxConsultants ||
-    selectedIds.length === 0;
+    selectedIds.length === 0 ||
+    isAnimating;
 
   return (
     <div
@@ -337,6 +356,7 @@ export const BriefModal: React.FC<Props> = ({
             </div>
             <button
               onClick={onClose}
+              disabled={isAnimating}
               style={{
                 padding: "0.35rem 0.7rem",
                 fontSize: "0.8rem",
@@ -344,7 +364,8 @@ export const BriefModal: React.FC<Props> = ({
                 border: "1px solid rgba(248,113,113,0.8)",
                 background: "rgba(127,29,29,0.9)",
                 color: "#fee2e2",
-                cursor: "pointer",
+                cursor: isAnimating ? "not-allowed" : "pointer",
+                opacity: isAnimating ? 0.5 : 1,
               }}
             >
               Close
@@ -428,7 +449,7 @@ export const BriefModal: React.FC<Props> = ({
               }}
             >
               {consultants.map((c) => {
-                const disabled = c.state === "cooldown";
+                const disabled = c.state === "cooldown" || isAnimating;
                 const selected = selectedIds.includes(c.id);
                 const avatarSrc = `avatars/${getAvatarFile(c.id)}`;
                 const tooltip = `${c.name} — ${c.tag}`;
@@ -503,18 +524,29 @@ export const BriefModal: React.FC<Props> = ({
                 cursor: disableDispatch ? "default" : "pointer",
               }}
             >
-              Dispatch team ({selectedIds.length}/{brief.maxConsultants})
+              {isAnimating ? "Dispatching..." : `Dispatch team (${selectedIds.length}/${brief.maxConsultants})`}
             </button>
           </div>
 
-          {outcomeMessage && (
+          {/* OUTCOME MESSAGE - only show after animation complete */}
+          {animationComplete && outcomeMessage && (
             <div
               style={{
                 marginTop: "0.5rem",
-                fontSize: "0.8rem",
-                color: outcomeMessage.startsWith("✅")
-                  ? "#4ade80"
-                  : "#fecaca",
+                padding: "0.8rem",
+                borderRadius: "0.5rem",
+                background: outcomeMessage.startsWith("✅")
+                  ? "rgba(34, 197, 94, 0.1)"
+                  : "rgba(239, 68, 68, 0.1)",
+                border: `1px solid ${
+                  outcomeMessage.startsWith("✅")
+                    ? "rgba(34, 197, 94, 0.5)"
+                    : "rgba(239, 68, 68, 0.5)"
+                }`,
+                fontSize: "0.85rem",
+                color: outcomeMessage.startsWith("✅") ? "#4ade80" : "#fca5a5",
+                textAlign: "center",
+                fontWeight: 600,
               }}
             >
               {outcomeMessage}
@@ -541,7 +573,7 @@ export const BriefModal: React.FC<Props> = ({
               color: "#9ca3af",
             }}
           >
-            Fit to brief
+            {isAnimating ? "Evaluating..." : "Fit to brief"}
           </div>
 
           <div
@@ -551,8 +583,9 @@ export const BriefModal: React.FC<Props> = ({
               marginBottom: "0.2rem",
             }}
           >
-            This chart shows how well your team shape overlaps the mission
-            shape. Green means success, red means failure.
+            {isAnimating
+              ? "Watch the ball to see where your team lands..."
+              : "This chart shows how well your team shape overlaps the mission shape. Green means success, red means failure."}
           </div>
 
           <div
@@ -571,6 +604,7 @@ export const BriefModal: React.FC<Props> = ({
               outcomeMessage={outcomeMessage}
               showPassCriteria={showPassCriteria}
               isAnimating={isAnimating}
+              animationComplete={animationComplete}
               ballPosition={ballPosition}
             />
           </div>
