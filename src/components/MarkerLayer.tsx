@@ -5,17 +5,17 @@ const getBriefIcon = (brief: ActiveBrief): string => {
   const id = brief.id.toLowerCase();
   const name = brief.name.toLowerCase();
 
-  if (id.includes("behaviour") || id.includes("culture")) return "👥";
-  if (id.includes("learning") || id.includes("development")) return "📘";
+  if (id.includes("behaviour") || id.includes("culture")) return "⚡️";
+  if (id.includes("learning") || id.includes("development")) return "⚡️";
   if (id.includes("design") || id.includes("motion") || name.includes("film"))
-    return "✦";
+    return "⚡️";
   if (id.includes("audit") || id.includes("research") || id.includes("insights"))
-    return "📊";
-  if (id.includes("strategy") || id.includes("brand")) return "♟";
+    return "⚡️";
+  if (id.includes("strategy") || id.includes("brand")) return "⚡️";
 
-  if (brief.difficultyLabel === "High stakes") return "!";
-  if (brief.difficultyLabel === "Standard") return "●";
-  return "○";
+  if (brief.difficultyLabel === "High stakes") return "⚡️";
+  if (brief.difficultyLabel === "Standard") return "⚡️";
+  return "⚡️";
 };
 
 export const MarkerLayer: React.FC<{
