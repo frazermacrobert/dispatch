@@ -232,10 +232,6 @@ const App: React.FC = () => {
         ? `✅ SUCCESS! ${outcome.explanation}`
         : `❌ FAILED. ${outcome.explanation}`
     );
-
-    setTimeout(() => {
-      handleCloseModal();
-    }, 3000);
   };
 
   const handleResume = () => {
@@ -608,6 +604,7 @@ const App: React.FC = () => {
               onDispatch={handleDispatch}
               onClose={handleCloseModal}
               outcomeMessage={outcomeMessage}
+              showPassCriteria={true}
             />
           )}
         </>
