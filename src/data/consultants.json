@@ -4,11 +4,11 @@
     "name": "Frazer",
     "tag": "Sparkle",
     "stats": {
-      "charisma": 3,
-      "intelligence": 3,
-      "speed": 6,
-      "strategy": 2,
-      "innovation": 7
+      "Flamboyance": 3,
+      "Process": 3,
+      "Pace": 6,
+      "Tenure": 2,
+      "Madcap": 7
     }
   },
   {
@@ -16,11 +16,11 @@
     "name": "Craig",
     "tag": "Design",
     "stats": {
-      "charisma": 2,
-      "intelligence": 2,
-      "speed": 6,
-      "strategy": 3,
-      "innovation": 6
+      "Flamboyance": 2,
+      "Process": 2,
+      "Pace": 6,
+      "Tenure": 3,
+      "Madcap": 6
     }
   },
   {
@@ -28,11 +28,11 @@
     "name": "Al",
     "tag": "Vision/EVP/Mission",
     "stats": {
-      "charisma": 3,
-      "intelligence": 5,
-      "speed": 1,
-      "strategy": 6,
-      "innovation": 2
+      "Flamboyance": 3,
+      "Process": 5,
+      "Pace": 1,
+      "Tenure": 6,
+      "Madcap": 2
     }
   },
   {
@@ -40,11 +40,11 @@
     "name": "Miles",
     "tag": "Motion",
     "stats": {
-      "charisma": 3,
-      "intelligence": 2,
-      "speed": 2,
-      "strategy": 2,
-      "innovation": 2
+      "Flamboyance": 3,
+      "Process": 2,
+      "Pace": 2,
+      "Tenure": 2,
+      "Madcap": 2
     }
   },
   {
@@ -52,11 +52,11 @@
     "name": "Hayley",
     "tag": "Recognition & Reward",
     "stats": {
-      "charisma": 4,
-      "intelligence": 3,
-      "speed": 1,
-      "strategy": 4,
-      "innovation": 2
+      "Flamboyance": 4,
+      "Process": 3,
+      "Pace": 1,
+      "Tenure": 4,
+      "Madcap": 2
     }
   },
   {
@@ -64,11 +64,11 @@
     "name": "Ste",
     "tag": "Copywriting",
     "stats": {
-      "charisma": 3,
-      "intelligence": 3,
-      "speed": 2,
-      "strategy": 3,
-      "innovation": 1
+      "Flamboyance": 3,
+      "Process": 3,
+      "Pace": 2,
+      "Tenure": 3,
+      "Madcap": 1
     }
   },
   {
@@ -76,11 +76,11 @@
     "name": "Jo",
     "tag": "Generalist",
     "stats": {
-      "charisma": 3,
-      "intelligence": 3,
-      "speed": 3,
-      "strategy": 4,
-      "innovation": 2
+      "Flamboyance": 3,
+      "Process": 3,
+      "Pace": 3,
+      "Tenure": 4,
+      "Madcap": 2
     }
   },
   {
@@ -88,11 +88,11 @@
     "name": "Gonzalo",
     "tag": "Audits & Listening",
     "stats": {
-      "charisma": 2,
-      "intelligence": 4,
-      "speed": 1,
-      "strategy": 4,
-      "innovation": 1
+      "Flamboyance": 2,
+      "Process": 4,
+      "Pace": 1,
+      "Tenure": 4,
+      "Madcap": 1
     }
   },
   {
@@ -100,11 +100,11 @@
     "name": "Rachel",
     "tag": "Strategy",
     "stats": {
-      "charisma": 2,
-      "intelligence": 7,
-      "speed": 1,
-      "strategy": 6,
-      "innovation": 1
+      "Flamboyance": 2,
+      "Process": 7,
+      "Pace": 1,
+      "Tenure": 6,
+      "Madcap": 1
     }
   },
   {
@@ -112,11 +112,11 @@
     "name": "Alex",
     "tag": "Generalist",
     "stats": {
-      "charisma": 5,
-      "intelligence": 3,
-      "speed": 4,
-      "strategy": 3,
-      "innovation": 2
+      "Flamboyance": 5,
+      "Process": 3,
+      "Pace": 4,
+      "Tenure": 3,
+      "Madcap": 2
     }
   },
   {
@@ -124,11 +124,11 @@
     "name": "Lucy",
     "tag": "Generalist",
     "stats": {
-      "charisma": 4,
-      "intelligence": 4,
-      "speed": 3,
-      "strategy": 4,
-      "innovation": 3
+      "Flamboyance": 4,
+      "Process": 4,
+      "Pace": 3,
+      "Tenure": 4,
+      "Madcap": 3
     }
   }
 ]

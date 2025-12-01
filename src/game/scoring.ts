@@ -1,13 +1,6 @@
 import { ActiveBrief, Consultant, Stats } from "./types";
 import * as turf from "@turf/turf";
-
-const STAT_KEYS: Array<keyof Stats> = [
-  "charisma",
-  "intelligence",
-  "speed",
-  "strategy",
-  "innovation",
-];
+import { STAT_KEYS } from "./constants";
 
 // Create a pentagon polygon from 5-axis stats
 function statsToPolygon(stats: Stats): turf.Feature<turf.Polygon> {
@@ -33,11 +26,11 @@ function statsToPolygon(stats: Stats): turf.Feature<turf.Polygon> {
 // Combine multiple consultants' stats by summing each axis
 function combineStats(consultants: Consultant[]): Stats {
   const combined: Stats = {
-    charisma: 0,
-    intelligence: 0,
-    speed: 0,
-    strategy: 0,
-    innovation: 0,
+    Flamboyance: 0,
+    Process: 0,
+    Pace: 0,
+    Tenure: 0,
+    Madcap: 0,
   };
   
   consultants.forEach((c) => {
