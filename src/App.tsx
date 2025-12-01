@@ -18,6 +18,7 @@ type GamePhase = "intro" | "playing" | "ended";
 const App: React.FC = () => {
   const [phase, setPhase] = useState<GamePhase>("intro");
   const [isPaused, setIsPaused] = useState(false);
+  const [isBriefModalOpen, setIsBriefModalOpen] = useState(false);
   const [consultants, setConsultants] = useState<Consultant[]>([]);
   const [briefs, setBriefs] = useState<ActiveBrief[]>([]);
   const [selectedBriefId, setSelectedBriefId] = useState<string | null>(null);
@@ -96,7 +97,7 @@ const App: React.FC = () => {
 
   useInterval(
     spawnBrief,
-    isPaused ? null : spawnDelay
+    isPaused || isBriefModalOpen ? null : spawnDelay
   );
 
   // timer tick (100ms)
@@ -158,14 +159,14 @@ const App: React.FC = () => {
     setSelectedBriefId(briefId);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    isPausedRef.current = true;
+    setIsBriefModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setSelectedBriefId(null);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
-    isPausedRef.current = false;
+    setIsBriefModalOpen(false);
   };
 
   const handleToggleConsultant = (consultantId: string) => {
