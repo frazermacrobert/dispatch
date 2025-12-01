@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { ActiveBrief, Consultant } from "../game/types";
 import { STAT_KEYS, STAT_LABELS, StatKey } from "../game/constants";
 
@@ -10,6 +10,7 @@ type Props = {
   onDispatch: () => void;
   onClose: () => void;
   outcomeMessage: string | null;
+  showPassCriteria: boolean;
 };
 
 const getAvatarFile = (id: string): string => {
@@ -29,13 +30,17 @@ const RadarChart: React.FC<{
   required: Record<StatKey, number>;
   team: Record<StatKey, number>;
   outcomeMessage: string | null;
-}> = ({ required, team, outcomeMessage }) => {
+  showPassCriteria: boolean;
+  isAnimating: boolean;
+  ballPosition: [number, number] | null;
+}> = ({ required, team, outcomeMessage, showPassCriteria, isAnimating, ballPosition }) => {
   const centerX = 50;
   const centerY = 50;
   const radius = 40;
 
   const outcomeIsSuccess = outcomeMessage?.startsWith("✅") ?? false;
   const outcomeIsFail = outcomeMessage?.startsWith("❌") ?? false;
+  const showRequirements = showPassCriteria || outcomeMessage !== null;
 
   const teamStroke = outcomeIsSuccess
     ? "#22c55e"
@@ -101,12 +106,18 @@ const RadarChart: React.FC<{
         );
       })}
 
-      <polygon
-        points={requiredPoints}
-        fill="rgba(148,163,184,0.2)"
-        stroke="#e5e7eb"
-        strokeWidth={0.7}
-      />
+      {showRequirements && (
+        <polygon
+          points={requiredPoints}
+          fill="rgba(148,163,184,0.2)"
+          stroke="#e5e7eb"
+          strokeWidth={0.7}
+          style={{
+            opacity: isAnimating || outcomeMessage ? 1 : 0,
+            transition: "opacity 0.3s ease"
+          }}
+        />
+      )}
 
       <polygon
         points={teamPoints}
@@ -114,6 +125,27 @@ const RadarChart: React.FC<{
         stroke={teamStroke}
         strokeWidth={0.8}
       />
+
+      {ballPosition && (
+        <>
+          {/* Ball glow */}
+          <circle
+            cx={ballPosition[0]}
+            cy={ballPosition[1]}
+            r={2}
+            fill="rgba(251, 191, 36, 0.3)"
+          />
+          {/* Ball */}
+          <circle
+            cx={ballPosition[0]}
+            cy={ballPosition[1]}
+            r={1.2}
+            fill="#fbbf24"
+            stroke="#f59e0b"
+            strokeWidth={0.3}
+          />
+        </>
+      )}
 
       {STAT_KEYS.map((k, i) => {
         const angle = (2 * Math.PI * i) / STAT_KEYS.length - Math.PI / 2;
@@ -145,7 +177,11 @@ export const BriefModal: React.FC<Props> = ({
   onDispatch,
   onClose,
   outcomeMessage,
+  showPassCriteria,
 }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [ballPosition, setBallPosition] = useState<[number, number] | null>(null);
+
   const selectedTeam = useMemo(
     () => consultants.filter((c) => selectedIds.includes(c.id)),
     [consultants, selectedIds]
@@ -168,6 +204,72 @@ export const BriefModal: React.FC<Props> = ({
     }
     return base;
   }, [selectedTeam]);
+
+  // Animation effect when dispatch is clicked
+  useEffect(() => {
+    if (!outcomeMessage) {
+      setIsAnimating(false);
+      setBallPosition(null);
+      return;
+    }
+
+    setIsAnimating(true);
+    
+    const centerX = 50;
+    const centerY = 50;
+    const radius = 40;
+    const maxValue = Math.max(
+      ...STAT_KEYS.map((key) => Math.max(requiredStats[key], teamStats[key] || 0))
+    );
+
+    // Animate ball bouncing around
+    let frame = 0;
+    const totalFrames = 60; // 2 seconds at 30fps
+    
+    const animate = () => {
+      if (frame >= totalFrames) {
+        // Stop at final position
+        return;
+      }
+
+      // Create bouncing motion around the radar
+      const t = frame / totalFrames;
+      const bounces = 8;
+      const angle = t * Math.PI * 2 * bounces + Math.random() * 0.3;
+      
+      // Vary the radius to create bounce effect
+      const radiusFactor = 0.3 + Math.abs(Math.sin(t * Math.PI * bounces * 2)) * 0.6;
+      const r = radius * radiusFactor;
+      
+      const x = centerX + r * Math.cos(angle);
+      const y = centerY + r * Math.sin(angle);
+      
+      setBallPosition([x, y]);
+      frame++;
+      
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    // After animation, set final position
+    setTimeout(() => {
+      // Pick a random point inside the required polygon
+      const randomAngle = Math.random() * Math.PI * 2;
+      const randomStat = STAT_KEYS[Math.floor(Math.random() * STAT_KEYS.length)];
+      const statIndex = STAT_KEYS.indexOf(randomStat);
+      const statAngle = (2 * Math.PI * statIndex) / STAT_KEYS.length - Math.PI / 2;
+      
+      const randomRadius = (requiredStats[randomStat] / maxValue) * radius * (0.3 + Math.random() * 0.7);
+      
+      const finalX = centerX + randomRadius * Math.cos(statAngle + (Math.random() - 0.5) * 0.5);
+      const finalY = centerY + randomRadius * Math.sin(statAngle + (Math.random() - 0.5) * 0.5);
+      
+      setBallPosition([finalX, finalY]);
+      setIsAnimating(false);
+    }, 2000);
+
+  }, [outcomeMessage, requiredStats, teamStats]);
 
   const disableDispatch =
     selectedIds.length < brief.minConsultants ||
@@ -391,7 +493,7 @@ export const BriefModal: React.FC<Props> = ({
               style={{
                 padding: "0.55rem 1.3rem",
                 borderRadius: "999px",
-                border: "1px солид-transparent",
+                border: "1px solid transparent",
                 background: disableDispatch
                   ? "rgba(30,64,175,0.5)"
                   : "linear-gradient(to right, #22c55e, #16a34a)",
@@ -467,6 +569,9 @@ export const BriefModal: React.FC<Props> = ({
               required={requiredStats}
               team={teamStats}
               outcomeMessage={outcomeMessage}
+              showPassCriteria={showPassCriteria}
+              isAnimating={isAnimating}
+              ballPosition={ballPosition}
             />
           </div>
         </div>
