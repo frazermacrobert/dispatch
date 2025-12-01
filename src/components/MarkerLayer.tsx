@@ -199,7 +199,6 @@ export const MarkerLayer: React.FC<{
               </button>
             </div>
 
-            {/* timer text below */}
             {brief.timeLimitMs !== Infinity && (
               <div
                 style={{
