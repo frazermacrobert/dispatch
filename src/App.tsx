@@ -83,16 +83,26 @@ const App: React.FC = () => {
       return;
     }
 
-    const archetype = briefsData[Math.floor(Math.random() * briefsData.length)];
-    const newBrief = createBriefInstance(archetype, briefsSpawned);
+    const briefsToSpawn = briefsSpawned < 4 ? 1 : Math.floor(Math.random() * 2) + 2; // 1, then 2-3
+    const remainingSlots = spawnConfig.totalBriefs - briefsSpawned;
+    const numToSpawn = Math.min(briefsToSpawn, remainingSlots);
 
-    if (isFirst) {
-      newBrief.timeLimitMs = Infinity;
-      newBrief.remainingMs = Infinity;
+    const newBriefs: ActiveBrief[] = [];
+    for (let i = 0; i < numToSpawn; i++) {
+      const archetype = briefsData[Math.floor(Math.random() * briefsData.length)];
+      const newBrief = createBriefInstance(archetype, briefsSpawned + i);
+
+      if (isFirst && i === 0) {
+        newBrief.timeLimitMs = Infinity;
+        newBrief.remainingMs = Infinity;
+      }
+      newBriefs.push(newBrief);
     }
 
-    setBriefs((prev) => [...prev, newBrief]);
-    setBriefsSpawned((prev) => prev + 1);
+    if (newBriefs.length > 0) {
+      setBriefs((prev) => [...prev, ...newBriefs]);
+      setBriefsSpawned((prev) => prev + newBriefs.length);
+    }
   };
 
   useInterval(
