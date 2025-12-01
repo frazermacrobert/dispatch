@@ -33,8 +33,9 @@ const RadarChart: React.FC<{
   showPassCriteria: boolean;
   isAnimating: boolean;
   animationComplete: boolean;
-  ballPosition: [number, number] | null;
-}> = ({ required, team, outcomeMessage, showPassCriteria, isAnimating, animationComplete, ballPosition }) => {
+  animationScale: number;
+  pulseCount: number;
+}> = ({ required, team, outcomeMessage, showPassCriteria, isAnimating, animationComplete, animationScale, pulseCount }) => {
   const centerX = 50;
   const centerY = 50;
   const radius = 40;
@@ -42,6 +43,20 @@ const RadarChart: React.FC<{
   const outcomeIsSuccess = outcomeMessage?.startsWith("✅") ?? false;
   const outcomeIsFail = outcomeMessage?.startsWith("❌") ?? false;
   const showRequirements = showPassCriteria || isAnimating || animationComplete;
+
+  // Determine color based on animation state
+  let requirementStroke = "#e5e7eb";
+  let requirementFill = "rgba(148,163,184,0.2)";
+  
+  if (animationComplete) {
+    if (outcomeIsSuccess) {
+      requirementStroke = "#22c55e";
+      requirementFill = "rgba(34, 197, 94, 0.3)";
+    } else if (outcomeIsFail) {
+      requirementStroke = "#ef4444";
+      requirementFill = "rgba(239, 68, 68, 0.3)";
+    }
+  }
 
   const teamStroke = outcomeIsSuccess
     ? "#22c55e"
@@ -56,7 +71,8 @@ const RadarChart: React.FC<{
     : "rgba(59, 130, 246, 0.25)";
 
   const maxValue = Math.max(
-    ...STAT_KEYS.map((key) => Math.max(required[key], team[key] || 0))
+    ...STAT_KEYS.map((key) => Math.max(required[key], team[key] || 0)),
+    10 // Ensure max is at least 10 for animation
   );
 
   const toPoint = (value: number, index: number): string => {
@@ -67,8 +83,25 @@ const RadarChart: React.FC<{
     return `${x},${y}`;
   };
 
-  const requiredPoints = STAT_KEYS.map((k, i) => toPoint(required[k], i)).join(" ");
+  // During animation, scale from max (10) down to actual requirement
+  const animatedRequired = STAT_KEYS.reduce((acc, key) => {
+    const maxVal = 10;
+    const targetVal = required[key];
+    const currentVal = maxVal - (maxVal - targetVal) * animationScale;
+    acc[key] = currentVal;
+    return acc;
+  }, {} as Record<StatKey, number>);
+
+  const requiredPoints = STAT_KEYS.map((k, i) => 
+    toPoint(isAnimating ? animatedRequired[k] : required[k], i)
+  ).join(" ");
+  
   const teamPoints = STAT_KEYS.map((k, i) => toPoint(team[k] || 0, i)).join(" ");
+
+  // Calculate pulse scale (1.0 to 1.1 and back)
+  const pulseScale = isAnimating && pulseCount < 3 
+    ? 1 + Math.sin(pulseCount * Math.PI) * 0.05
+    : 1;
 
   return (
     <svg viewBox="0 0 100 100">
@@ -108,16 +141,18 @@ const RadarChart: React.FC<{
       })}
 
       {showRequirements && (
-        <polygon
-          points={requiredPoints}
-          fill="rgba(148,163,184,0.2)"
-          stroke="#e5e7eb"
-          strokeWidth={0.7}
-          style={{
-            opacity: isAnimating || animationComplete ? 1 : 0,
-            transition: "opacity 0.5s ease"
-          }}
-        />
+        <g transform={`translate(${centerX}, ${centerY}) scale(${pulseScale}) translate(${-centerX}, ${-centerY})`}>
+          <polygon
+            points={requiredPoints}
+            fill={requirementFill}
+            stroke={requirementStroke}
+            strokeWidth={isAnimating ? 1.2 : 0.7}
+            style={{
+              opacity: isAnimating || animationComplete ? 1 : 0,
+              transition: animationComplete ? "stroke 0.3s ease, fill 0.3s ease" : "opacity 0.5s ease"
+            }}
+          />
+        </g>
       )}
 
       <polygon
@@ -126,30 +161,6 @@ const RadarChart: React.FC<{
         stroke={teamStroke}
         strokeWidth={0.8}
       />
-
-      {ballPosition && (
-        <>
-          {/* Ball glow */}
-          <circle
-            cx={ballPosition[0]}
-            cy={ballPosition[1]}
-            r={3}
-            fill="rgba(251, 191, 36, 0.4)"
-            style={{
-              filter: "blur(1px)"
-            }}
-          />
-          {/* Ball */}
-          <circle
-            cx={ballPosition[0]}
-            cy={ballPosition[1]}
-            r={1.5}
-            fill="#fbbf24"
-            stroke="#f59e0b"
-            strokeWidth={0.4}
-          />
-        </>
-      )}
 
       {STAT_KEYS.map((k, i) => {
         const angle = (2 * Math.PI * i) / STAT_KEYS.length - Math.PI / 2;
@@ -185,7 +196,8 @@ export const BriefModal: React.FC<Props> = ({
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationComplete, setAnimationComplete] = useState(false);
-  const [ballPosition, setBallPosition] = useState<[number, number] | null>(null);
+  const [animationScale, setAnimationScale] = useState(0);
+  const [pulseCount, setPulseCount] = useState(0);
   const animationFrameRef = useRef<number>();
 
   const selectedTeam = useMemo(
@@ -216,7 +228,8 @@ export const BriefModal: React.FC<Props> = ({
     if (!outcomeMessage) {
       setIsAnimating(false);
       setAnimationComplete(false);
-      setBallPosition(null);
+      setAnimationScale(0);
+      setPulseCount(0);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -225,58 +238,36 @@ export const BriefModal: React.FC<Props> = ({
 
     setIsAnimating(true);
     setAnimationComplete(false);
+    setAnimationScale(0);
+    setPulseCount(0);
     
-    const centerX = 50;
-    const centerY = 50;
-    const radius = 40;
-    const maxValue = Math.max(
-      ...STAT_KEYS.map((key) => Math.max(requiredStats[key], teamStats[key] || 0))
-    );
-
-    // Wheel of Fortune style: fast then slow down
-    const totalDuration = 3000; // 3 seconds total
+    const pulseDuration = 600; // ms per pulse
+    const shrinkDuration = 1800; // ms to shrink (during pulses)
+    const totalDuration = 3 * pulseDuration; // 3 pulses total
     const startTime = Date.now();
     
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / totalDuration, 1);
       
-      // Easing function: starts fast, slows down dramatically (like a wheel)
-      const easeOut = 1 - Math.pow(1 - progress, 4);
+      // Calculate which pulse we're on
+      const currentPulse = Math.floor((elapsed / pulseDuration) * 3);
+      setPulseCount(currentPulse);
       
-      // Total rotations: starts at many, ends at final position
-      const totalRotations = 8;
-      const currentRotation = easeOut * totalRotations;
-      const angle = currentRotation * Math.PI * 2;
-      
-      // Radius varies slightly for visual interest
-      const radiusVariation = Math.sin(currentRotation * Math.PI * 8) * 3;
-      const r = radius * 0.6 + radiusVariation;
-      
-      const x = centerX + r * Math.cos(angle);
-      const y = centerY + r * Math.sin(angle);
-      
-      setBallPosition([x, y]);
+      // Shrink from max (0) to target size (1) over the full duration
+      const shrinkProgress = Math.min(elapsed / shrinkDuration, 1);
+      // Ease out cubic for smooth deceleration
+      const eased = 1 - Math.pow(1 - shrinkProgress, 3);
+      setAnimationScale(eased);
       
       if (progress < 1) {
         animationFrameRef.current = requestAnimationFrame(animate);
       } else {
-        // Animation complete - set final position
+        // Animation complete
         setIsAnimating(false);
         setAnimationComplete(true);
-        
-        // Pick a final position within the required polygon
-        const randomStat = STAT_KEYS[Math.floor(Math.random() * STAT_KEYS.length)];
-        const statIndex = STAT_KEYS.indexOf(randomStat);
-        const finalAngle = (2 * Math.PI * statIndex) / STAT_KEYS.length - Math.PI / 2;
-        
-        const randomRadius = (requiredStats[randomStat] / maxValue) * radius * (0.4 + Math.random() * 0.5);
-        const angleOffset = (Math.random() - 0.5) * 0.8;
-        
-        const finalX = centerX + randomRadius * Math.cos(finalAngle + angleOffset);
-        const finalY = centerY + randomRadius * Math.sin(finalAngle + angleOffset);
-        
-        setBallPosition([finalX, finalY]);
+        setAnimationScale(1);
+        setPulseCount(3);
       }
     };
 
@@ -287,7 +278,7 @@ export const BriefModal: React.FC<Props> = ({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [outcomeMessage, requiredStats, teamStats]);
+  }, [outcomeMessage]);
 
   const disableDispatch =
     selectedIds.length < brief.minConsultants ||
@@ -524,7 +515,7 @@ export const BriefModal: React.FC<Props> = ({
                 cursor: disableDispatch ? "default" : "pointer",
               }}
             >
-              {isAnimating ? "Dispatching..." : `Dispatch team (${selectedIds.length}/${brief.maxConsultants})`}
+              {isAnimating ? "Evaluating..." : `Dispatch team (${selectedIds.length}/${brief.maxConsultants})`}
             </button>
           </div>
 
@@ -584,8 +575,8 @@ export const BriefModal: React.FC<Props> = ({
             }}
           >
             {isAnimating
-              ? "Watch the ball to see where your team lands..."
-              : "This chart shows how well your team shape overlaps the mission shape. Green means success, red means failure."}
+              ? "Watch the requirements shrink to reveal the mission parameters..."
+              : "This chart shows how well your team shape overlaps the mission shape."}
           </div>
 
           <div
@@ -605,7 +596,8 @@ export const BriefModal: React.FC<Props> = ({
               showPassCriteria={showPassCriteria}
               isAnimating={isAnimating}
               animationComplete={animationComplete}
-              ballPosition={ballPosition}
+              animationScale={animationScale}
+              pulseCount={pulseCount}
             />
           </div>
         </div>
