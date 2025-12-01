@@ -5,11 +5,11 @@
     "description": "Client wants to redraw the company narrative and reposition in market.",
     "difficultyLabel": "High stakes",
     "requirements": {
-      "charisma": 7,
-      "intelligence": 9,
-      "speed": 4,
-      "strategy": 9,
-      "innovation": 7
+      "Flamboyance": 7,
+      "Process": 9,
+      "Pace": 4,
+      "Tenure": 9,
+      "Madcap": 7
     },
     "minConsultants": 1,
     "maxConsultants": 3,
@@ -21,11 +21,11 @@
     "description": "Organisation needs to shift mindsets and behaviours across 5,000 employees.",
     "difficultyLabel": "Complex",
     "requirements": {
-      "charisma": 8,
-      "intelligence": 7,
-      "speed": 5,
-      "strategy": 8,
-      "innovation": 6
+      "Flamboyance": 8,
+      "Process": 7,
+      "Pace": 5,
+      "Tenure": 8,
+      "Madcap": 6
     },
     "minConsultants": 1,
     "maxConsultants": 3,
@@ -37,11 +37,11 @@
     "description": "Brand needs modern design system and updated visual guidelines.",
     "difficultyLabel": "Creative",
     "requirements": {
-      "charisma": 6,
-      "intelligence": 6,
-      "speed": 6,
-      "strategy": 5,
-      "innovation": 10
+      "Flamboyance": 6,
+      "Process": 6,
+      "Pace": 6,
+      "Tenure": 5,
+      "Madcap": 10
     },
     "minConsultants": 1,
     "maxConsultants": 2,
@@ -53,11 +53,11 @@
     "description": "Client needs dynamic motion graphics for product launch across channels.",
     "difficultyLabel": "Fast turnaround",
     "requirements": {
-      "charisma": 5,
-      "intelligence": 5,
-      "speed": 10,
-      "strategy": 4,
-      "innovation": 9
+      "Flamboyance": 5,
+      "Process": 5,
+      "Pace": 10,
+      "Tenure": 4,
+      "Madcap": 9
     },
     "minConsultants": 1,
     "maxConsultants": 2,
@@ -69,11 +69,11 @@
     "description": "Employee sentiment analysis and comprehensive listening campaign required.",
     "difficultyLabel": "Data-driven",
     "requirements": {
-      "charisma": 6,
-      "intelligence": 10,
-      "speed": 5,
-      "strategy": 8,
-      "innovation": 5
+      "Flamboyance": 6,
+      "Process": 10,
+      "Pace": 5,
+      "Tenure": 8,
+      "Madcap": 5
     },
     "minConsultants": 1,
     "maxConsultants": 3,
@@ -85,11 +85,11 @@
     "description": "Design and implement employee recognition system for global workforce.",
     "difficultyLabel": "People-focused",
     "requirements": {
-      "charisma": 9,
-      "intelligence": 7,
-      "speed": 6,
-      "strategy": 7,
-      "innovation": 6
+      "Flamboyance": 9,
+      "Process": 7,
+      "Pace": 6,
+      "Tenure": 7,
+      "Madcap": 6
     },
     "minConsultants": 1,
     "maxConsultants": 3,
@@ -101,11 +101,11 @@
     "description": "C-suite needs strategic counsel on organisational direction and priorities.",
     "difficultyLabel": "Executive level",
     "requirements": {
-      "charisma": 8,
-      "intelligence": 9,
-      "speed": 4,
-      "strategy": 10,
-      "innovation": 6
+      "Flamboyance": 8,
+      "Process": 9,
+      "Pace": 4,
+      "Tenure": 10,
+      "Madcap": 6
     },
     "minConsultants": 1,
     "maxConsultants": 3,
@@ -117,11 +117,11 @@
     "description": "Drive adoption of new ways of working through targeted interventions.",
     "difficultyLabel": "Behavioural",
     "requirements": {
-      "charisma": 7,
-      "intelligence": 8,
-      "speed": 6,
-      "strategy": 8,
-      "innovation": 7
+      "Flamboyance": 7,
+      "Process": 8,
+      "Pace": 6,
+      "Tenure": 8,
+      "Madcap": 7
     },
     "minConsultants": 1,
     "maxConsultants": 3,
@@ -133,11 +133,11 @@
     "description": "Comprehensive review of internal communication channels and effectiveness.",
     "difficultyLabel": "Analytical",
     "requirements": {
-      "charisma": 5,
-      "intelligence": 9,
-      "speed": 5,
-      "strategy": 8,
-      "innovation": 5
+      "Flamboyance": 5,
+      "Process": 9,
+      "Pace": 5,
+      "Tenure": 8,
+      "Madcap": 5
     },
     "minConsultants": 1,
     "maxConsultants": 2,
@@ -149,11 +149,11 @@
     "description": "Create leadership development programme for emerging talent pipeline.",
     "difficultyLabel": "Educational",
     "requirements": {
-      "charisma": 7,
-      "intelligence": 8,
-      "speed": 5,
-      "strategy": 7,
-      "innovation": 7
+      "Flamboyance": 7,
+      "Process": 8,
+      "Pace": 5,
+      "Tenure": 7,
+      "Madcap": 7
     },
     "minConsultants": 1,
     "maxConsultants": 3,

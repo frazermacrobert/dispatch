@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { ActiveBrief, Consultant } from "../game/types";
+import { STAT_KEYS, STAT_LABELS, StatKey } from "../game/constants";
 
 type Props = {
   brief: ActiveBrief;
@@ -9,17 +10,6 @@ type Props = {
   onDispatch: () => void;
   onClose: () => void;
   outcomeMessage: string | null;
-};
-
-const STAT_KEYS = ["charisma", "intelligence", "speed", "strategy", "innovation"] as const;
-type StatKey = (typeof STAT_KEYS)[number];
-
-const STAT_LABELS: Record<StatKey, string> = {
-  charisma: "Ch",
-  intelligence: "In",
-  speed: "Sp",
-  strategy: "St",
-  innovation: "Inno",
 };
 
 const getAvatarFile = (id: string): string => {
@@ -165,18 +155,16 @@ export const BriefModal: React.FC<Props> = ({
 
   const teamStats = useMemo(() => {
     const base: Record<StatKey, number> = {
-      charisma: 0,
-      intelligence: 0,
-      speed: 0,
-      strategy: 0,
-      innovation: 0,
+      Flamboyance: 0,
+      Process: 0,
+      Pace: 0,
+      Tenure: 0,
+      Madcap: 0,
     };
     for (const c of selectedTeam) {
-      base.charisma += c.stats.charisma;
-      base.intelligence += c.stats.intelligence;
-      base.speed += c.stats.speed;
-      base.strategy += c.stats.strategy;
-      base.innovation += c.stats.innovation;
+      STAT_KEYS.forEach((key) => {
+        base[key] += c.stats[key];
+      });
     }
     return base;
   }, [selectedTeam]);

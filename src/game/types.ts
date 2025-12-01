@@ -1,12 +1,11 @@
-
-export type StatKey = "charisma" | "intelligence" | "speed" | "strategy" | "innovation";
+import { StatKey } from "./constants";
 
 export interface Stats {
-  charisma: number;
-  intelligence: number;
-  speed: number;
-  strategy: number;
-  innovation: number;
+  Flamboyance: number;
+  Process: number;
+  Pace: number;
+  Tenure: number;
+  Madcap: number;
 }
 
 export type ConsultantState = "available" | "selected" | "cooldown";
