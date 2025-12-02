@@ -29,6 +29,7 @@ export interface BriefArchetype {
   minConsultants: number;
   maxConsultants: number;
   autoWinConsultantId?: string;
+  clue?: string;
 }
 
 export type BriefStatus = "pending" | "success" | "failed";

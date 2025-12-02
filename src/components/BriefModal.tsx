@@ -376,51 +376,34 @@ export const BriefModal: React.FC<Props> = ({
             {brief.description}
           </p>
 
-          {/* REQUIRED SKILLS */}
-          <div
-            style={{
-              padding: "0.8rem 0.9rem",
-              borderRadius: "0.75rem",
-              border: "1px solid rgba(30,64,175,0.8)",
-              background: "rgba(15,23,42,0.85)",
-              fontSize: "0.8rem",
-              color: "#cbd5f5",
-            }}
-          >
+          {/* CLUE */}
+          {brief.clue && (
             <div
               style={{
-                marginBottom: "0.4rem",
-                fontSize: "0.75rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "#9ca3af",
+                padding: "0.8rem 0.9rem",
+                borderRadius: "0.75rem",
+                border: "1px solid rgba(30,64,175,0.8)",
+                background: "rgba(15,23,42,0.85)",
+                fontSize: "0.9rem",
+                color: "#cbd5f5",
+                lineHeight: 1.6,
               }}
             >
-              Required skills
+              <div dangerouslySetInnerHTML={{ __html: brief.clue }} />
+              <div
+                style={{
+                  marginTop: "0.8rem",
+                  fontSize: "0.8rem",
+                  color: "#9ca3af",
+                }}
+              >
+                Team size:{" "}
+                {brief.minConsultants === brief.maxConsultants
+                  ? brief.minConsultants
+                  : `${brief.minConsultants}–${brief.maxConsultants}`}
+              </div>
             </div>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "0.75rem",
-              }}
-            >
-              {STAT_KEYS.map((key) => (
-                <div key={key}>
-                  <span style={{ color: "#9ca3af" }}>{STAT_LABELS[key]}:</span>{" "}
-                  <span>{requiredStats[key]}</span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ marginTop: "0.4rem", color: "#9ca3af" }}>
-              Team size:{" "}
-              {brief.minConsultants === brief.maxConsultants
-                ? brief.minConsultants
-                : `${brief.minConsultants}–${brief.maxConsultants}`}
-            </div>
-          </div>
+          )}
 
           {/* SELECT TEAM – AVATARS ONLY */}
           <div>
