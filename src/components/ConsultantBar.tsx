@@ -37,33 +37,47 @@ export const ConsultantBar: React.FC<{
     >
       {consultants.map((c) => {
         const isCooldown = c.state === "cooldown";
+        const isInjured = c.status === "injured";
+        const isOut = c.status === "out";
         const avatarFile = getAvatarFile(c.id);
         const avatarSrc = `${import.meta.env.BASE_URL}avatars/${avatarFile}`;
-        const tooltip = `${c.name} — ${c.tag}`;
+
+        let tooltip = `${c.name} — ${c.tag}`;
+        if (isInjured)
+          tooltip += "\nInjured: one more failure and they're out.";
+        if (isOut) tooltip += "\nOut for the rest of the game.";
+
+        const style: React.CSSProperties = {
+          padding: "0.5rem 0.75rem",
+          background: "rgba(59, 130, 246, 0.2)",
+          border: "2px solid rgba(59, 130, 246, 0.5)",
+          borderRadius: "0.5rem",
+          color: "white",
+          minWidth: "96px",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        };
+
+        if (isCooldown) {
+          style.background = "rgba(100, 116, 139, 0.3)";
+          style.border = "2px solid rgba(100, 116, 139, 0.5)";
+          style.color = "#94a3b8";
+          style.opacity = 0.6;
+        }
+
+        if (isOut) {
+          style.background = "rgba(55, 65, 81, 0.3)";
+          style.border = "2px solid rgba(75, 85, 99, 0.5)";
+          style.color = "#9ca3af";
+          style.opacity = 0.5;
+        }
 
         return (
-          <div
-            key={c.id}
-            title={tooltip}
-            style={{
-              padding: "0.5rem 0.75rem",
-              background: isCooldown
-                ? "rgba(100, 116, 139, 0.3)"
-                : "rgba(59, 130, 246, 0.2)",
-              border: isCooldown
-                ? "2px solid rgba(100, 116, 139, 0.5)"
-                : "2px solid rgba(59, 130, 246, 0.5)",
-              borderRadius: "0.5rem",
-              color: isCooldown ? "#94a3b8" : "white",
-              minWidth: "96px",
-              textAlign: "center",
-              opacity: isCooldown ? 0.6 : 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <div key={c.id} title={tooltip} style={style}>
             <img
               src={avatarSrc}
               alt={tooltip}
@@ -74,8 +88,23 @@ export const ConsultantBar: React.FC<{
                 objectFit: "cover",
                 display: "block",
                 marginBottom: isCooldown ? "0.25rem" : 0,
+                filter: isOut ? "grayscale(100%)" : "none",
               }}
             />
+            {isInjured && !isOut && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "0.5rem",
+                  left: "0.75rem",
+                  right: "0.75rem",
+                  bottom: isCooldown ? "2.2rem" : "0.5rem",
+                  borderRadius: "999px",
+                  background: "rgba(239, 68, 68, 0.3)",
+                  zIndex: 1,
+                }}
+              />
+            )}
 
             {isCooldown && (
               <div

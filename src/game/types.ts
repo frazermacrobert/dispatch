@@ -9,6 +9,7 @@ export interface Stats {
 }
 
 export type ConsultantState = "available" | "selected" | "cooldown";
+export type ConsultantStatus = "normal" | "injured" | "out";
 
 export interface Consultant {
   id: string;
@@ -17,6 +18,7 @@ export interface Consultant {
   avatar?: string;
   stats: Stats;
   state: ConsultantState;
+  status: ConsultantStatus;
   cooldownMs?: number;
 }
 

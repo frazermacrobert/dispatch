@@ -441,6 +441,18 @@ body {
   opacity: 0.55;
 }
 
+.consultant-card.injured {
+  border-color: var(--danger);
+  background: radial-gradient(circle at top left, #ef444412, transparent),
+    rgba(15, 23, 42, 0.98);
+}
+
+.consultant-card.out {
+  border-color: var(--muted);
+  background: rgba(15, 23, 42, 0.5);
+  opacity: 0.5;
+}
+
 .consultant-header {
   display: flex;
   align-items: center;
