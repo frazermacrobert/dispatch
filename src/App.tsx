@@ -228,20 +228,51 @@ const App: React.FC = () => {
       setSuccessCount((c) => c + 1);
       // on success, consultants just go on cooldown
       setConsultants((prev) =>
-        prev.map((c) =>
-          selectedConsultantIds.includes(c.id)
-            ? { ...c, state: "cooldown", cooldownMs: spawnConfig.cooldownMs }
-            : c
-        )
-      );
-    } else {
-      setFailCount((c) => c + 1);
-      // on fail, peril system kicks in
-      setConsultants((prev) =>
         prev.map((c) => {
           if (!selectedConsultantIds.includes(c.id)) {
             return c;
           }
+
+          // Special character logic for success
+          let cooldownMs = spawnConfig.cooldownMs;
+          if (c.id === "frazer") {
+            cooldownMs /= 2;
+          }
+          if (c.id === "gonzalo") {
+            cooldownMs *= 2;
+          }
+
+          if (c.id === "craig" && c.status === "injured") {
+            return { ...c, status: "normal", state: "cooldown", cooldownMs };
+          }
+
+          if (c.id === "alex" && selectedConsultantIds.length === 1) {
+            return { ...c, stats: { ...c.stats, Tenure: 8 }, state: "cooldown", cooldownMs };
+          }
+
+          return { ...c, state: "cooldown", cooldownMs };
+        })
+      );
+    } else {
+      setFailCount((c) => c + 1);
+      // on fail, peril system kicks in
+      setConsultants((prev) => {
+        const isAlexSoloFail =
+          selectedConsultantIds.length === 1 && selectedConsultantIds[0] === "alex";
+        const alexSoloFailVictimIds = ["frazer", "jo", "lucy"];
+
+        return prev.map((c) => {
+          const wasOnMission = selectedConsultantIds.includes(c.id);
+          const isCollateralVictim =
+            isAlexSoloFail && alexSoloFailVictimIds.includes(c.id);
+
+          if (!wasOnMission && !isCollateralVictim) {
+            return c; // No change
+          }
+
+          // --- Peril System Logic ---
+          // This applies to dispatched consultants AND collateral victims.
+
           // already out--no change
           if (c.status === "out") {
             return c;
@@ -251,14 +282,26 @@ const App: React.FC = () => {
             return { ...c, status: "out", state: "available", cooldownMs: 0 };
           }
           // normal--now injured
+          let cooldownMs = spawnConfig.cooldownMs;
+
+          // Special character cooldown logic for failure (only for those on the mission)
+          if (wasOnMission) {
+            if (c.id === "frazer") {
+              cooldownMs *= 3;
+            }
+            if (c.id === "gonzalo") {
+              cooldownMs *= 2;
+            }
+          }
+
           return {
             ...c,
             status: "injured",
             state: "cooldown",
-            cooldownMs: spawnConfig.cooldownMs,
+            cooldownMs,
           };
-        })
-      );
+        });
+      });
     }
 
     setOutcomeMessage(
