@@ -425,10 +425,46 @@ export const BriefModal: React.FC<Props> = ({
               }}
             >
               {consultants.map((c) => {
-                const disabled = c.state === "cooldown" || isAnimating;
+                const isOut = c.status === "out";
+                const isInjured = c.status === "injured";
+                const onCooldown = c.state === "cooldown";
+                const disabled = onCooldown || isOut || isAnimating;
                 const selected = selectedIds.includes(c.id);
                 const avatarSrc = `avatars/${getAvatarFile(c.id)}`;
-                const tooltip = `${c.name} — ${c.tag}`;
+
+                let tooltip = `${c.name} — ${c.tag}`;
+                if (isInjured)
+                  tooltip += "\nInjured: one more failure and they're out.";
+                if (isOut) tooltip += "\nOut for the rest of the game.";
+                if (onCooldown)
+                  tooltip += `\nOn mission (${(
+                    (c.cooldownMs || 0) / 1000
+                  ).toFixed(1)}s)`;
+
+                const style: React.CSSProperties = {
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "999px",
+                  padding: 0,
+                  border: "2px solid rgba(148,163,184,0.5)",
+                  background: "rgba(15,23,42,0.9)",
+                  cursor: "pointer",
+                  position: "relative",
+                };
+
+                if (selected) {
+                  style.border = "2px solid rgba(34,197,94,0.9)";
+                }
+                if (isInjured) {
+                  style.border = "2px solid #ef4444";
+                }
+                if (isOut) {
+                  style.border = "2px solid #6b7280";
+                }
+                if (disabled) {
+                  style.opacity = 0.5;
+                  style.cursor = "default";
+                }
 
                 return (
                   <button
@@ -436,20 +472,7 @@ export const BriefModal: React.FC<Props> = ({
                     onClick={() => onToggleConsultant(c.id)}
                     disabled={disabled}
                     title={tooltip}
-                    style={{
-                      width: "72px",
-                      height: "72px",
-                      borderRadius: "999px",
-                      padding: 0,
-                      border: selected
-                        ? "2px solid rgba(34,197,94,0.9)"
-                        : "2px solid rgba(148,163,184,0.5)",
-                      background: disabled
-                        ? "rgba(15,23,42,0.4)"
-                        : "rgba(15,23,42,0.9)",
-                      opacity: disabled ? 0.4 : 1,
-                      cursor: disabled ? "default" : "pointer",
-                    }}
+                    style={style}
                   >
                     <img
                       src={avatarSrc}
@@ -459,8 +482,19 @@ export const BriefModal: React.FC<Props> = ({
                         height: "100%",
                         borderRadius: "999px",
                         objectFit: "cover",
+                        filter: isOut ? "grayscale(100%)" : "none",
                       }}
                     />
+                    {isInjured && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          borderRadius: "999px",
+                          background: "rgba(239, 68, 68, 0.3)",
+                        }}
+                      />
+                    )}
                   </button>
                 );
               })}
