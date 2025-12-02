@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Consultant, ActiveBrief, ConsultantState } from "./game/types";
+import {
+  Consultant,
+  ActiveBrief,
+  ConsultantState,
+  ConsultantStatus,
+} from "./game/types";
 import { evaluateMissionOutcome, createBriefInstance } from "./game/scoring";
 import { useInterval } from "./game/useInterval";
 import consultantsData from "./data/consultants.json";
@@ -40,6 +45,7 @@ const App: React.FC = () => {
     const initial: Consultant[] = consultantsData.map((c) => ({
       ...c,
       state: "available" as ConsultantState,
+      status: "normal" as ConsultantStatus,
       cooldownMs: 0,
     }));
     setConsultants(initial);
@@ -174,7 +180,12 @@ const App: React.FC = () => {
     if (outcomeMessage) return;
 
     const consultant = consultants.find((c) => c.id === consultantId);
-    if (!consultant || consultant.state === "cooldown") return;
+    if (
+      !consultant ||
+      consultant.state === "cooldown" ||
+      consultant.status === "out"
+    )
+      return;
 
     const brief = briefs.find((b) => b.id === selectedBriefId);
     if (!brief) return;
@@ -215,17 +226,40 @@ const App: React.FC = () => {
 
     if (outcome.success) {
       setSuccessCount((c) => c + 1);
+      // on success, consultants just go on cooldown
+      setConsultants((prev) =>
+        prev.map((c) =>
+          selectedConsultantIds.includes(c.id)
+            ? { ...c, state: "cooldown", cooldownMs: spawnConfig.cooldownMs }
+            : c
+        )
+      );
     } else {
       setFailCount((c) => c + 1);
+      // on fail, peril system kicks in
+      setConsultants((prev) =>
+        prev.map((c) => {
+          if (!selectedConsultantIds.includes(c.id)) {
+            return c;
+          }
+          // already out--no change
+          if (c.status === "out") {
+            return c;
+          }
+          // injured--now out
+          if (c.status === "injured") {
+            return { ...c, status: "out", state: "available", cooldownMs: 0 };
+          }
+          // normal--now injured
+          return {
+            ...c,
+            status: "injured",
+            state: "cooldown",
+            cooldownMs: spawnConfig.cooldownMs,
+          };
+        })
+      );
     }
-
-    setConsultants((prev) =>
-      prev.map((c) =>
-        selectedConsultantIds.includes(c.id)
-          ? { ...c, state: "cooldown", cooldownMs: spawnConfig.cooldownMs }
-          : c
-      )
-    );
 
     setOutcomeMessage(
       outcome.success

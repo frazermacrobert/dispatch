@@ -78,33 +78,35 @@ export const ConsultantBar: React.FC<{
 
         return (
           <div key={c.id} title={tooltip} style={style}>
-            <img
-              src={avatarSrc}
-              alt={tooltip}
-              style={{
-                width: "64px",
-                height: "64px",
-                borderRadius: "999px",
-                objectFit: "cover",
-                display: "block",
-                marginBottom: isCooldown ? "0.25rem" : 0,
-                filter: isOut ? "grayscale(100%)" : "none",
-              }}
-            />
-            {isInjured && !isOut && (
-              <div
+            <div style={{ position: "relative" }}>
+              <img
+                src={avatarSrc}
+                alt={tooltip}
                 style={{
-                  position: "absolute",
-                  top: "0.5rem",
-                  left: "0.75rem",
-                  right: "0.75rem",
-                  bottom: isCooldown ? "2.2rem" : "0.5rem",
+                  width: "64px",
+                  height: "64px",
                   borderRadius: "999px",
-                  background: "rgba(239, 68, 68, 0.3)",
-                  zIndex: 1,
+                  objectFit: "cover",
+                  display: "block",
+                  marginBottom: isCooldown ? "0.25rem" : 0,
+                  filter: isOut ? "grayscale(100%)" : "none",
                 }}
               />
-            )}
+              {isInjured && !isOut && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: "999px",
+                    background: "rgba(239, 68, 68, 0.4)",
+                    zIndex: 1,
+                  }}
+                />
+              )}
+            </div>
 
             {isCooldown && (
               <div
