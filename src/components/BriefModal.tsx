@@ -502,22 +502,28 @@ export const BriefModal: React.FC<Props> = ({
             </div>
 
             <button
-              onClick={onDispatch}
-              disabled={disableDispatch}
+              onClick={outcomeMessage ? onClose : onDispatch}
+              disabled={outcomeMessage ? isAnimating : disableDispatch}
               style={{
                 padding: "0.55rem 1.3rem",
                 borderRadius: "999px",
                 border: "1px solid transparent",
-                background: disableDispatch
+                background: (outcomeMessage ? isAnimating : disableDispatch)
                   ? "rgba(30,64,175,0.5)"
+                  : outcomeMessage
+                  ? "linear-gradient(to right, #3b82f6, #2563eb)"
                   : "linear-gradient(to right, #22c55e, #16a34a)",
-                color: disableDispatch ? "#cbd5f5" : "#022c22",
+                color: (outcomeMessage ? isAnimating : disableDispatch) ? "#cbd5f5" : outcomeMessage ? "#fff" : "#022c22",
                 fontWeight: 600,
                 fontSize: "0.85rem",
-                cursor: disableDispatch ? "default" : "pointer",
+                cursor: (outcomeMessage ? isAnimating : disableDispatch) ? "default" : "pointer",
               }}
             >
-              {isAnimating ? "Evaluating..." : `Dispatch team (${selectedIds.length}/${brief.maxConsultants})`}
+              {isAnimating
+                ? "Evaluating..."
+                : outcomeMessage
+                ? "Continue"
+                : `Dispatch team (${selectedIds.length}/${brief.maxConsultants})`}
             </button>
           </div>
 
@@ -543,20 +549,6 @@ export const BriefModal: React.FC<Props> = ({
               }}
             >
               <div>{outcomeMessage}</div>
-              <button
-                onClick={onClose}
-                style={{
-                  marginTop: "0.75rem",
-                  padding: "0.4rem 1rem",
-                  borderRadius: "999px",
-                  border: "1px solid rgba(148, 163, 184, 0.7)",
-                  background: "rgba(30, 41, 59, 0.8)",
-                  color: "#e2e8f0",
-                  cursor: "pointer",
-                }}
-              >
-                OK
-              </button>
             </div>
           )}
         </div>
