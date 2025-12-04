@@ -164,37 +164,11 @@ export const MarkerLayer: React.FC<{
 
             {/* timer text below */}
             {hasTimer && (
-              <div
-                style={{
-                  marginTop: "4px",
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  color: "white",
-                  textShadow: "0 1px 2px rgba(0,0,0,0.7)",
-                }}
-              >
-                {Math.ceil(timeRemainingSec)}s
-              </div>
+              <div className="timer">{Math.ceil(timeRemainingSec)}s</div>
             )}
           </div>
         );
       })}
-
-      {/* keep keyframes here if not already in global CSS */}
-      <style>
-        {`
-          @keyframes pulse {
-            0%, 100% {
-              opacity: 0.6;
-              transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-              opacity: 0.3;
-              transform: translate(-50%, -50%) scale(1.3);
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
