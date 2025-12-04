@@ -144,9 +144,6 @@ const App: React.FC = () => {
       return;
     }
 
-    let count: number;
-    let delayMs: number;
-
     // Initial spawn is always a single brief.
     if (briefsSpawned === 0) {
       spawnBrief(1);
