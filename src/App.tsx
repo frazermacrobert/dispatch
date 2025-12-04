@@ -60,6 +60,14 @@ const App: React.FC = () => {
 
   // start game
   const startGame = () => {
+    const initialConsultants: Consultant[] = consultantsData.map((c) => ({
+      ...c,
+      state: "available" as ConsultantState,
+      status: "normal" as ConsultantStatus,
+      cooldownMs: 0,
+    }));
+    setConsultants(initialConsultants);
+
     setPhase("playing");
     setIsPaused(false);
     isPausedRef.current = false;
