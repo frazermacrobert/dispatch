@@ -138,12 +138,6 @@ const App: React.FC = () => {
       return;
     }
 
-    // Stop spawning if all briefs are accounted for.
-    // The final brief is handled by the "end condition" useEffect.
-    if (briefsSpawned >= spawnConfig.totalBriefs - 1) {
-      return;
-    }
-
     // Initial spawn is always a single brief.
     if (briefsSpawned === 0) {
       spawnBrief(1);
@@ -154,18 +148,19 @@ const App: React.FC = () => {
     const activeBriefs = briefs.filter((b) => b.status === "pending");
     const maxConcurrentBriefs = 2; // Don't let more than 2 briefs be active at once
 
+    // Stop spawning if we've spawned all briefs (except the final one handled separately)
+    if (briefsSpawned >= spawnConfig.totalBriefs - 1) {
+      return;
+    }
+
     // If we already have the max number of active briefs, wait
     if (activeBriefs.length >= maxConcurrentBriefs) {
       return;
     }
 
-    // If we've spawned all we can so far, wait
-    if (briefsSpawned >= spawnConfig.totalBriefs) {
-      return;
-    }
-
     // Calculate how many briefs we can spawn
     const availableSlots = maxConcurrentBriefs - activeBriefs.length;
+    const remainingBriefs = spawnConfig.totalBriefs - 1 - briefsSpawned; // -1 because final is special
     
     // Determine spawn count and delay based on game progression
     let spawnCount = 1;
@@ -193,7 +188,7 @@ const App: React.FC = () => {
     }
 
     // Respect available slots and remaining briefs
-    spawnCount = Math.min(spawnCount, availableSlots, spawnConfig.totalBriefs - briefsSpawned);
+    spawnCount = Math.min(spawnCount, availableSlots, remainingBriefs);
 
     // Only spawn if we have slots available and briefs left to spawn
     if (spawnCount > 0) {
@@ -484,6 +479,8 @@ const App: React.FC = () => {
         ? `✅ SUCCESS! ${outcome.explanation}`
         : `❌ FAILED. ${outcome.explanation}`
     );
+
+    // Don't automatically close the modal - let the user click "Continue"
   };
 
   const handleResume = () => {
