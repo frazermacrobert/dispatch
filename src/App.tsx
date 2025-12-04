@@ -147,7 +147,7 @@ const App: React.FC = () => {
     // Subsequent spawns follow the sequence.
     // We subtract 1 from briefsSpawned because the first brief is handled separately.
     const sequenceIndex = (briefsSpawned - 1) % spawnConfig.spawnSequence.length;
-    const { count, delayMs } = spawnConfig.spawnSequence[sequenceIndex];
+    ({ count, delayMs } = spawnConfig.spawnSequence[sequenceIndex]);
 
     spawnTimeoutRef.current = window.setTimeout(() => {
       spawnBrief(count);
