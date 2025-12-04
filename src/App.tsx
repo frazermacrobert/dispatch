@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Consultant,
   ActiveBrief,
@@ -46,6 +46,13 @@ const App: React.FC = () => {
   const spawnTimeoutRef = useRef<number | null>(null);
   const dialogueTimeoutRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
+
+  const isFirstBriefPending = useMemo(() => {
+    if (briefs.length === 0) return false;
+    return (
+      briefs.find((b) => b.briefIndex === 0)?.status === "pending"
+    );
+  }, [briefs]);
 
   // initialise consultants
   useEffect(() => {
@@ -118,7 +125,7 @@ const App: React.FC = () => {
     // clear any existing timer on effect entry
     if (spawnTimeoutRef.current) clearTimeout(spawnTimeoutRef.current);
 
-    if (phase !== "playing" || isPaused || isBriefModalOpen) {
+    if (phase !== "playing" || isPaused || isBriefModalOpen || isFirstBriefPending) {
       return;
     }
 
@@ -131,15 +138,16 @@ const App: React.FC = () => {
     let count: number;
     let delayMs: number;
 
+    // Initial spawn is always a single brief.
     if (briefsSpawned === 0) {
-      // Initial spawn
-      count = 1;
-      delayMs = spawnConfig.initialDelayMs;
-    } else {
-      // Subsequent spawns
-      const sequenceIndex = (briefsSpawned - 1) % spawnConfig.spawnSequence.length;
-      ({ count, delayMs } = spawnConfig.spawnSequence[sequenceIndex]);
+      spawnBrief(1);
+      return;
     }
+
+    // Subsequent spawns follow the sequence.
+    // We subtract 1 from briefsSpawned because the first brief is handled separately.
+    const sequenceIndex = (briefsSpawned - 1) % spawnConfig.spawnSequence.length;
+    const { count, delayMs } = spawnConfig.spawnSequence[sequenceIndex];
 
     spawnTimeoutRef.current = window.setTimeout(() => {
       spawnBrief(count);
@@ -195,7 +203,7 @@ const App: React.FC = () => {
     if (phase !== "playing") return;
 
     timerIntervalRef.current = window.setInterval(() => {
-      if (isPausedRef.current || isPaused) return;
+      if (isPausedRef.current || isPaused || isBriefModalOpen) return;
 
       // brief timers
       setBriefs((prev) =>

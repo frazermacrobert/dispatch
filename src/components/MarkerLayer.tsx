@@ -64,15 +64,21 @@ export const MarkerLayer: React.FC<{
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
-                width: "80px",
-                height: "80px",
-                borderRadius: "50%",
-                background: isUrgent
-                  ? "radial-gradient(circle, rgba(239, 68, 68, 0.4), transparent)"
-                  : "radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent)",
-                animation: "pulse 2s ease-in-out infinite",
+                pointerEvents: "none",
               }}
-            />
+            >
+              <div
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "50%",
+                  background: isUrgent
+                    ? "radial-gradient(circle, rgba(239, 68, 68, 0.4), transparent)"
+                    : "radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent)",
+                  animation: "pulse 2s ease-in-out infinite",
+                }}
+              />
+            </div>
 
             {/* shared container for ring + button */}
             <div
