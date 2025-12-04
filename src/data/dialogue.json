@@ -1,18 +1,244 @@
 {
-  "normal": [
-    "Ready for the next challenge.",
-    "Let's get to work.",
-    "I'm feeling motivated.",
-    "Another day, another solution.",
-    "We can handle anything.",
-    "I've got a good feeling about this."
-  ],
-  "injured": [
-    "I need a moment to recover.",
-    "That was a close one.",
-    "I'll be back on my feet soon.",
-    "Just a scratch.",
-    "We need to be more careful.",
-    "I'm not giving up that easily."
-  ]
+  "frazer": {
+    "normal": [
+      "Let's bring some sparkle to this!",
+      "I've got ideas brewing already.",
+      "Ready to add some magic.",
+      "Time to shine!",
+      "This is going to be brilliant."
+    ],
+    "injured": [
+      "That was... intense.",
+      "I need a moment to regroup.",
+      "Still got some sparkle left in me.",
+      "One setback won't stop me.",
+      "I'll bounce back stronger."
+    ],
+    "cooldown": [
+      "Working my magic on this one.",
+      "This brief needs the Frazer touch.",
+      "In the zone right now.",
+      "Let me work this through."
+    ]
+  },
+  "craig": {
+    "normal": [
+      "Design is ready to go.",
+      "Let's make something beautiful.",
+      "I can see the vision already.",
+      "Ready to create.",
+      "Time to bring the visual impact."
+    ],
+    "injured": [
+      "That didn't go as planned.",
+      "Need to refine my approach.",
+      "Back to the drawing board mentally.",
+      "I'll heal up and come back stronger.",
+      "One failure doesn't define the design."
+    ],
+    "cooldown": [
+      "Crafting the perfect visual solution.",
+      "This design is coming together nicely.",
+      "Let me finish this masterpiece.",
+      "The creative process needs time."
+    ]
+  },
+  "al": {
+    "normal": [
+      "Strategy is clear.",
+      "I know exactly what needs to happen.",
+      "Vision locked in.",
+      "Let's align on the mission.",
+      "Ready to drive this forward."
+    ],
+    "injured": [
+      "That's a learning opportunity.",
+      "Time to recalibrate the approach.",
+      "I've weathered worse storms.",
+      "Strategy needs adjustment.",
+      "We'll come back from this."
+    ],
+    "cooldown": [
+      "Executing the strategic vision.",
+      "This requires careful planning.",
+      "Let me bring this home.",
+      "The mission is in good hands."
+    ]
+  },
+  "miles": {
+    "normal": [
+      "Motion graphics ready to roll.",
+      "Let's bring this to life.",
+      "I can animate anything.",
+      "Ready for the fast turnaround.",
+      "Time to make things move."
+    ],
+    "injured": [
+      "That moved too fast for me.",
+      "Need to slow down and recover.",
+      "I'll be back at full speed soon.",
+      "Just a minor setback.",
+      "Still got the skills."
+    ],
+    "cooldown": [
+      "Animating at lightning speed.",
+      "This is flowing perfectly.",
+      "Watch the magic happen.",
+      "Almost done with this beauty."
+    ]
+  },
+  "hayley": {
+    "normal": [
+      "Ready to recognize great work.",
+      "People deserve to feel valued.",
+      "Let's make them feel appreciated.",
+      "Recognition is my specialty.",
+      "Time to celebrate achievements."
+    ],
+    "injured": [
+      "That was difficult to process.",
+      "I need to recharge emotionally.",
+      "People-work can be draining.",
+      "I'll come back with renewed energy.",
+      "One tough brief won't break me."
+    ],
+    "cooldown": [
+      "Crafting meaningful recognition.",
+      "This rewards program is solid.",
+      "People are going to love this.",
+      "Making everyone feel valued."
+    ]
+  },
+  "ste": {
+    "normal": [
+      "Words are ready.",
+      "I can craft the perfect message.",
+      "Let me tell the story.",
+      "Copy is my forte.",
+      "Ready to write brilliance."
+    ],
+    "injured": [
+      "Lost my way with words there.",
+      "Need to find my voice again.",
+      "Writer's block hits hard.",
+      "I'll rediscover the narrative.",
+      "Words will flow again soon."
+    ],
+    "cooldown": [
+      "Crafting the perfect copy.",
+      "These words are landing perfectly.",
+      "The narrative is strong.",
+      "This message resonates."
+    ]
+  },
+  "jo": {
+    "normal": [
+      "Ready for whatever comes.",
+      "I can handle anything.",
+      "Versatility is my strength.",
+      "Let's tackle this together.",
+      "Generalist mode: activated."
+    ],
+    "injured": [
+      "That was tougher than expected.",
+      "Need to recover my balance.",
+      "I'll adapt and overcome.",
+      "Flexibility means bouncing back.",
+      "One setback, many comebacks ahead."
+    ],
+    "cooldown": [
+      "Wearing multiple hats on this one.",
+      "Generalist skills in full effect.",
+      "I've got all the angles covered.",
+      "This is what I do best."
+    ]
+  },
+  "gonzalo": {
+    "normal": [
+      "Data is ready for analysis.",
+      "Let's dive into the insights.",
+      "Research mode engaged.",
+      "I see the patterns already.",
+      "Ready to uncover the truth."
+    ],
+    "injured": [
+      "The data was... inconclusive.",
+      "Need time to reanalyze.",
+      "Research requires patience.",
+      "I'll come back with better insights.",
+      "One failed audit, many successes ahead."
+    ],
+    "cooldown": [
+      "Crunching the numbers carefully.",
+      "The insights are revealing themselves.",
+      "This research is thorough.",
+      "Data never lies - let me work."
+    ]
+  },
+  "rachel": {
+    "normal": [
+      "Strategy is the foundation.",
+      "I have the long-term vision.",
+      "Let's think this through properly.",
+      "Ready to provide strategic counsel.",
+      "Experience guides the way."
+    ],
+    "injured": [
+      "That strategy didn't hold.",
+      "Time to reassess the approach.",
+      "Wisdom comes from failures too.",
+      "I've been through worse.",
+      "Strategic pivot incoming."
+    ],
+    "cooldown": [
+      "Providing strategic guidance.",
+      "This requires careful thought.",
+      "The strategy is sound.",
+      "Years of experience at work here."
+    ]
+  },
+  "alex": {
+    "normal": [
+      "Ready to jump in.",
+      "I can do a bit of everything.",
+      "Let's make this happen.",
+      "Versatile and ready.",
+      "Whatever you need."
+    ],
+    "injured": [
+      "That didn't go well at all.",
+      "I need to regroup.",
+      "Tough break there.",
+      "I'll come back better.",
+      "Learning from this one."
+    ],
+    "cooldown": [
+      "Handling this solo - watch me.",
+      "Generalist power activated.",
+      "I've got this covered.",
+      "Multi-tasking in progress."
+    ]
+  },
+  "lucy": {
+    "normal": [
+      "Ready to develop solutions.",
+      "Learning is my passion.",
+      "Let's grow together.",
+      "I can teach and inspire.",
+      "Time to make an impact."
+    ],
+    "injured": [
+      "That was a harsh lesson.",
+      "Need time to process and learn.",
+      "Growth comes from challenges.",
+      "I'll be back with new insights.",
+      "Every setback teaches something."
+    ],
+    "cooldown": [
+      "Developing leaders right now.",
+      "This learning program is strong.",
+      "Education takes time - let me work.",
+      "Building capabilities as we speak."
+    ]
+  }
 }
