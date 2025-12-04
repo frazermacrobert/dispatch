@@ -15,7 +15,7 @@ import { ConsultantBar } from "./components/ConsultantBar";
 import { MarkerLayer } from "./components/MarkerLayer";
 import { BriefModal } from "./components/BriefModal";
 import PauseMenu from "./components/PauseMenu";
-import SpeechBubble from "./components/SpeechBubble";
+import Intercom from "./components/Intercom";
 
 type GamePhase = "intro" | "playing" | "ended";
 
@@ -242,8 +242,8 @@ const App: React.FC = () => {
   const triggerDialogue = () => {
     if (isPaused || isBriefModalOpen || dialogue) return;
 
-    // 15% chance to trigger dialogue (increased from 10% for better frequency)
-    if (Math.random() > 0.15) return;
+    // 25% chance to trigger dialogue (increased for better story flow)
+    if (Math.random() > 0.25) return;
 
     // Filter consultants who are available to speak
     const availableConsultants = consultants.filter((c) => c.status !== "out");
@@ -278,18 +278,19 @@ const App: React.FC = () => {
 
   useInterval(
     triggerDialogue,
-    isPaused || isBriefModalOpen ? null : 8000
+    isPaused || isBriefModalOpen ? null : 12000 // Increased to 12 seconds for better pacing
   );
 
-  // auto-clear dialogue
+  // auto-clear dialogue after ticker completes
   useEffect(() => {
     if (dialogue) {
       if (dialogueTimeoutRef.current) {
         clearTimeout(dialogueTimeoutRef.current);
       }
+      // Clear after 6 seconds (matching ticker duration)
       dialogueTimeoutRef.current = window.setTimeout(() => {
         setDialogue(null);
-      }, 4000);
+      }, 6000);
     }
   }, [dialogue]);
 
@@ -869,7 +870,7 @@ const App: React.FC = () => {
             onMarkerClick={handleMarkerClick}
           />
 
-          <SpeechBubble dialogue={dialogue} consultants={consultants} />
+          <Intercom dialogue={dialogue} consultants={consultants} />
           <ConsultantBar consultants={consultants} />
 
           {selectedBrief && (
