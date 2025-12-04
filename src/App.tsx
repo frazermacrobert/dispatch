@@ -133,13 +133,36 @@ const App: React.FC = () => {
     // clear any existing timer on effect entry
     if (spawnTimeoutRef.current) clearTimeout(spawnTimeoutRef.current);
 
+    console.log("Spawn effect triggered:", {
+      phase,
+      isPaused,
+      isBriefModalOpen,
+      isFirstBriefPending,
+      briefsSpawned,
+      activeBriefs: briefs.filter((b) => b.status === "pending").length,
+    });
+
     // Don't spawn if paused, modal is open, or first brief is still pending
-    if (phase !== "playing" || isPaused || isBriefModalOpen || isFirstBriefPending) {
+    if (phase !== "playing") {
+      console.log("Not playing");
+      return;
+    }
+    if (isPaused) {
+      console.log("Paused");
+      return;
+    }
+    if (isBriefModalOpen) {
+      console.log("Modal is open");
+      return;
+    }
+    if (isFirstBriefPending) {
+      console.log("First brief still pending");
       return;
     }
 
     // Initial spawn is always a single brief.
     if (briefsSpawned === 0) {
+      console.log("Initial spawn");
       spawnBrief(1);
       return;
     }
@@ -148,13 +171,17 @@ const App: React.FC = () => {
     const activeBriefs = briefs.filter((b) => b.status === "pending");
     const maxConcurrentBriefs = 2; // Don't let more than 2 briefs be active at once
 
+    console.log("Active briefs:", activeBriefs.length, "Max:", maxConcurrentBriefs);
+
     // Stop spawning if we've spawned all briefs (except the final one handled separately)
     if (briefsSpawned >= spawnConfig.totalBriefs - 1) {
+      console.log("Reached spawn limit");
       return;
     }
 
     // If we already have the max number of active briefs, wait
     if (activeBriefs.length >= maxConcurrentBriefs) {
+      console.log("Too many active briefs");
       return;
     }
 
@@ -190,9 +217,12 @@ const App: React.FC = () => {
     // Respect available slots and remaining briefs
     spawnCount = Math.min(spawnCount, availableSlots, remainingBriefs);
 
+    console.log("Scheduling spawn:", spawnCount, "briefs in", delayMs, "ms");
+
     // Only spawn if we have slots available and briefs left to spawn
     if (spawnCount > 0) {
       spawnTimeoutRef.current = window.setTimeout(() => {
+        console.log("Executing spawn of", spawnCount, "briefs");
         spawnBrief(spawnCount);
       }, delayMs);
     }
