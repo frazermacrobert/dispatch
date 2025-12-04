@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const [successCount, setSuccessCount] = useState(0);
   const [failCount, setFailCount] = useState(0);
   const [outcomeMessage, setOutcomeMessage] = useState<string | null>(null);
-  const [spawnDelay, setSpawnDelay] = useState<number | null>(null);
+  const [isFinalBriefPending, setIsFinalBriefPending] = useState(false);
   const [dialogue, setDialogue] = useState<{
     consultantId: string;
     text: string;
@@ -81,47 +81,77 @@ const App: React.FC = () => {
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
 
-    // spawn timer for ongoing briefs
-    const [min, max] = spawnConfig.intervalRangeMs;
-    setSpawnDelay(min + Math.random() * (max - min));
-
-    // spawn first brief after initial delay
-    if (spawnTimeoutRef.current) {
-      clearTimeout(spawnTimeoutRef.current);
-    }
-    spawnTimeoutRef.current = window.setTimeout(() => {
-      spawnBrief(true);
-    }, spawnConfig.initialDelayMs);
+    // The main useEffect hook will handle the initial spawn.
   };
 
   // spawn a new brief
-  const spawnBrief = (isFirst: boolean = false) => {
+  const spawnBrief = (count = 1) => {
     if (briefsSpawned >= spawnConfig.totalBriefs) {
-      setSpawnDelay(null);
       return;
     }
 
-    const archetype = briefsData[Math.floor(Math.random() * briefsData.length)];
-    const newBrief = createBriefInstance(archetype, briefsSpawned);
+    const newBriefs: ActiveBrief[] = [];
+    const numToSpawn = Math.min(count, spawnConfig.totalBriefs - briefsSpawned);
 
-    if (isFirst) {
-      newBrief.timeLimitMs = Infinity;
-      newBrief.remainingMs = Infinity;
+    for (let i = 0; i < numToSpawn; i++) {
+      const briefIndex = briefsSpawned + i;
+      const archetype =
+        briefsData[Math.floor(Math.random() * briefsData.length)];
+      const newBrief = createBriefInstance(archetype, briefIndex);
+
+      // The very first brief has no timer.
+      if (briefIndex === 0) {
+        newBrief.timeLimitMs = Infinity;
+        newBrief.remainingMs = Infinity;
+      }
+      newBriefs.push(newBrief);
     }
 
-    setBriefs((prev) => [...prev, newBrief]);
-    setBriefsSpawned((prev) => prev + 1);
-
-    // set delay for next spawn
-    const [min, max] = spawnConfig.intervalRangeMs;
-    setSpawnDelay(min + Math.random() * (max - min));
+    if (newBriefs.length > 0) {
+      setBriefs((prev) => [...prev, ...newBriefs]);
+      setBriefsSpawned((prev) => prev + newBriefs.length);
+    }
   };
 
-  useInterval(
-    spawnBrief,
-    isPaused || isBriefModalOpen ? null : spawnDelay
-  );
+  // Main spawn scheduling effect
+  useEffect(() => {
+    // clear any existing timer on effect entry
+    if (spawnTimeoutRef.current) clearTimeout(spawnTimeoutRef.current);
 
+    if (phase !== "playing" || isPaused || isBriefModalOpen) {
+      return;
+    }
+
+    // Stop spawning if all briefs are accounted for.
+    // The final brief is handled by the "end condition" useEffect.
+    if (briefsSpawned >= spawnConfig.totalBriefs - 1) {
+      return;
+    }
+
+    let count: number;
+    let delayMs: number;
+
+    if (briefsSpawned === 0) {
+      // Initial spawn
+      count = 1;
+      delayMs = spawnConfig.initialDelayMs;
+    } else {
+      // Subsequent spawns
+      const sequenceIndex = (briefsSpawned - 1) % spawnConfig.spawnSequence.length;
+      ({ count, delayMs } = spawnConfig.spawnSequence[sequenceIndex]);
+    }
+
+    spawnTimeoutRef.current = window.setTimeout(() => {
+      spawnBrief(count);
+    }, delayMs);
+
+    // cleanup on unmount or when dependencies change.
+    return () => {
+      if (spawnTimeoutRef.current && !isFinalBriefPending) {
+        clearTimeout(spawnTimeoutRef.current);
+      }
+    };
+  }, [briefsSpawned, phase, isPaused, isBriefModalOpen]);
   // dialogue system
   const triggerDialogue = () => {
     if (isPaused || isBriefModalOpen || dialogue) return;
@@ -209,6 +239,22 @@ const App: React.FC = () => {
     if (phase !== "playing") return;
 
     const allResolved = briefs.every((b) => b.status !== "pending");
+
+    // all briefs are resolved, and we've spawned all but the last one.
+    if (
+      briefs.length > 0 &&
+      allResolved &&
+      briefsSpawned === spawnConfig.totalBriefs - 1
+    ) {
+      // pause dramatically, then spawn the last one
+      setIsFinalBriefPending(true);
+      if (spawnTimeoutRef.current) clearTimeout(spawnTimeoutRef.current);
+      spawnTimeoutRef.current = window.setTimeout(() => {
+        spawnBrief(1);
+        setIsFinalBriefPending(false);
+      }, spawnConfig.finalBriefDelayMs);
+    }
+
     if (briefsSpawned >= spawnConfig.totalBriefs && allResolved) {
       setPhase("ended");
     }

@@ -1,9 +1,16 @@
 {
   "totalBriefs": 20,
   "initialDelayMs": 3000,
-  "intervalRangeMs": [
-    6000,
-    12000
+  "cooldownMs": 20000,
+  "spawnSequence": [
+    { "count": 1, "delayMs": 3000 },
+    { "count": 2, "delayMs": 3000 },
+    { "count": 1, "delayMs": 3000 },
+    { "count": 2, "delayMs": 3000 },
+    { "count": 3, "delayMs": 3000 },
+    { "count": 1, "delayMs": 3000 },
+    { "count": 2, "delayMs": 3000 },
+    { "count": 3, "delayMs": 3000 }
   ],
-  "cooldownMs": 20000
+  "finalBriefDelayMs": 4000
 }
