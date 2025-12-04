@@ -1,0 +1,51 @@
+/* src/components/Intercom.css */
+.intercom {
+    position: absolute;
+    top: 120px;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    /* justify-content: flex-end;  We will control position with transform */
+    visibility: hidden;
+    overflow: hidden; /* Important: hides the content when it's off-screen */
+    pointer-events: none; /* Prevent interaction with the invisible element */
+}
+
+.intercom.visible {
+    visibility: visible;
+}
+
+.intercom-content {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    white-space: nowrap;
+    transform: translateX(100vw); /* Start completely off-screen to the right of the viewport */
+}
+
+.intercom.visible .intercom-content {
+    animation: scroll-left 15s linear forwards;
+}
+
+.intercom-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    border: 2px solid #fff;
+}
+
+@keyframes scroll-left {
+    from {
+        transform: translateX(100vw);
+    }
+    to {
+        /* This will make it scroll all the way off the left side */
+        transform: translateX(-110%);
+    }
+}
