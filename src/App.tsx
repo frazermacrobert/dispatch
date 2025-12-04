@@ -159,6 +159,11 @@ const App: React.FC = () => {
       return;
     }
 
+    // If we've spawned all we can so far, wait
+    if (briefsSpawned >= spawnConfig.totalBriefs) {
+      return;
+    }
+
     // Calculate how many briefs we can spawn
     const availableSlots = maxConcurrentBriefs - activeBriefs.length;
     
@@ -187,10 +192,10 @@ const App: React.FC = () => {
       delayMs = 3000;
     }
 
-    // Respect available slots
-    spawnCount = Math.min(spawnCount, availableSlots);
+    // Respect available slots and remaining briefs
+    spawnCount = Math.min(spawnCount, availableSlots, spawnConfig.totalBriefs - briefsSpawned);
 
-    // Only spawn if we have slots available
+    // Only spawn if we have slots available and briefs left to spawn
     if (spawnCount > 0) {
       spawnTimeoutRef.current = window.setTimeout(() => {
         spawnBrief(spawnCount);
@@ -203,7 +208,7 @@ const App: React.FC = () => {
         clearTimeout(spawnTimeoutRef.current);
       }
     };
-  }, [briefsSpawned, briefs, phase, isPaused, isBriefModalOpen, isFirstBriefPending]);
+  }, [briefsSpawned, briefs, phase, isPaused, isBriefModalOpen, isFirstBriefPending, isFinalBriefPending]);
 
   // dialogue system
   const triggerDialogue = () => {
