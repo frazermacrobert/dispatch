@@ -19,6 +19,15 @@ import SpeechBubble from "./components/SpeechBubble";
 
 type GamePhase = "intro" | "playing" | "ended";
 
+// Type for dialogue data structure
+type DialogueData = {
+  [consultantId: string]: {
+    normal: string[];
+    injured: string[];
+    cooldown: string[];
+  };
+};
+
 const App: React.FC = () => {
   const [phase, setPhase] = useState<GamePhase>("intro");
   const [isPaused, setIsPaused] = useState(false);
@@ -160,23 +169,41 @@ const App: React.FC = () => {
       }
     };
   }, [briefsSpawned, phase, isPaused, isBriefModalOpen]);
+
   // dialogue system
   const triggerDialogue = () => {
     if (isPaused || isBriefModalOpen || dialogue) return;
 
-    // small chance to trigger
-    if (Math.random() > 0.1) return;
+    // 15% chance to trigger dialogue (increased from 10% for better frequency)
+    if (Math.random() > 0.15) return;
 
+    // Filter consultants who are available to speak
     const availableConsultants = consultants.filter((c) => c.status !== "out");
     if (availableConsultants.length === 0) return;
 
+    // Pick a random consultant
     const consultant =
       availableConsultants[
         Math.floor(Math.random() * availableConsultants.length)
       ];
-    const lines = dialogueData[consultant.status as keyof typeof dialogueData];
-    if (!lines) return;
 
+    // Get the consultant-specific dialogue based on their current state
+    const consultantDialogue = (dialogueData as DialogueData)[consultant.id];
+    if (!consultantDialogue) return;
+
+    // Determine which set of lines to use based on consultant state
+    let lines: string[];
+    if (consultant.state === "cooldown") {
+      lines = consultantDialogue.cooldown || consultantDialogue.normal;
+    } else if (consultant.status === "injured") {
+      lines = consultantDialogue.injured || consultantDialogue.normal;
+    } else {
+      lines = consultantDialogue.normal;
+    }
+
+    if (!lines || lines.length === 0) return;
+
+    // Pick a random line from the appropriate set
     const text = lines[Math.floor(Math.random() * lines.length)];
     setDialogue({ consultantId: consultant.id, text });
   };
