@@ -58,9 +58,8 @@ const App: React.FC = () => {
 
   const isFirstBriefPending = useMemo(() => {
     if (briefs.length === 0) return false;
-    return (
-      briefs.find((b) => b.briefIndex === 0)?.status === "pending"
-    );
+    const firstBrief = briefs.find((b) => b.instanceIndex === 0);
+    return firstBrief ? firstBrief.status === "pending" : false;
   }, [briefs]);
 
   // initialise consultants
@@ -134,6 +133,7 @@ const App: React.FC = () => {
     // clear any existing timer on effect entry
     if (spawnTimeoutRef.current) clearTimeout(spawnTimeoutRef.current);
 
+    // Don't spawn if paused, modal is open, or first brief is still pending
     if (phase !== "playing" || isPaused || isBriefModalOpen || isFirstBriefPending) {
       return;
     }
@@ -165,7 +165,7 @@ const App: React.FC = () => {
         clearTimeout(spawnTimeoutRef.current);
       }
     };
-  }, [briefsSpawned, phase, isPaused, isBriefModalOpen]);
+  }, [briefsSpawned, phase, isPaused, isBriefModalOpen, isFirstBriefPending]);
 
   // dialogue system
   const triggerDialogue = () => {
@@ -227,7 +227,8 @@ const App: React.FC = () => {
     if (phase !== "playing") return;
 
     timerIntervalRef.current = window.setInterval(() => {
-      if (isPausedRef.current || isPaused || isBriefModalOpen) return;
+      // Pause all timers when paused, modal is open, or first brief is pending
+      if (isPausedRef.current || isPaused || isBriefModalOpen || isFirstBriefPending) return;
 
       // brief timers
       setBriefs((prev) =>
@@ -264,7 +265,7 @@ const App: React.FC = () => {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [phase, isPaused, briefsExpire]);
+  }, [phase, isPaused, briefsExpire, isBriefModalOpen, isFirstBriefPending]);
 
   // end condition
   useEffect(() => {
