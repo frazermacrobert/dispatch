@@ -40,7 +40,6 @@ const App: React.FC = () => {
   const [successCount, setSuccessCount] = useState(0);
   const [failCount, setFailCount] = useState(0);
   const [outcomeMessage, setOutcomeMessage] = useState<string | null>(null);
-  const [isFinalBriefPending, setIsFinalBriefPending] = useState(false);
   const [dialogue, setDialogue] = useState<{
     consultantId: string;
     text: string;
@@ -172,16 +171,16 @@ const App: React.FC = () => {
       return;
     }
 
+    // Stop spawning if we've spawned all briefs
+    if (briefsSpawned >= spawnConfig.totalBriefs) {
+      console.log("All briefs spawned");
+      return;
+    }
+
     // Smart pacing: Check how many briefs are currently active
     const maxConcurrentBriefs = 2; // Don't let more than 2 briefs be active at once
 
     console.log("Active briefs:", activeBriefCount, "Max:", maxConcurrentBriefs);
-
-    // Stop spawning if we've spawned all briefs (except the final one handled separately)
-    if (briefsSpawned >= spawnConfig.totalBriefs - 1) {
-      console.log("Reached spawn limit");
-      return;
-    }
 
     // If we already have the max number of active briefs, wait
     if (activeBriefCount >= maxConcurrentBriefs) {
@@ -191,7 +190,7 @@ const App: React.FC = () => {
 
     // Calculate how many briefs we can spawn
     const availableSlots = maxConcurrentBriefs - activeBriefCount;
-    const remainingBriefs = spawnConfig.totalBriefs - 1 - briefsSpawned; // -1 because final is special
+    const remainingBriefs = spawnConfig.totalBriefs - briefsSpawned;
     
     // Determine spawn count and delay based on game progression
     let spawnCount = 1;
@@ -233,11 +232,11 @@ const App: React.FC = () => {
 
     // cleanup on unmount or when dependencies change.
     return () => {
-      if (spawnTimeoutRef.current && !isFinalBriefPending) {
+      if (spawnTimeoutRef.current) {
         clearTimeout(spawnTimeoutRef.current);
       }
     };
-  }, [briefsSpawned, activeBriefCount, phase, isPaused, isBriefModalOpen, isFirstBriefPending, isFinalBriefPending]);
+  }, [briefsSpawned, activeBriefCount, phase, isPaused, isBriefModalOpen, isFirstBriefPending]);
 
   // dialogue system
   const triggerDialogue = () => {
@@ -339,28 +338,22 @@ const App: React.FC = () => {
     };
   }, [phase, isPaused, briefsExpire, isBriefModalOpen, isFirstBriefPending]);
 
-  // end condition
+  // end condition - game ends when all briefs are resolved
   useEffect(() => {
     if (phase !== "playing") return;
 
     const allResolved = briefs.every((b) => b.status !== "pending");
 
-    // all briefs are resolved, and we've spawned all but the last one.
-    if (
-      briefs.length > 0 &&
-      allResolved &&
-      briefsSpawned === spawnConfig.totalBriefs - 1
-    ) {
-      // pause dramatically, then spawn the last one
-      setIsFinalBriefPending(true);
-      if (spawnTimeoutRef.current) clearTimeout(spawnTimeoutRef.current);
-      spawnTimeoutRef.current = window.setTimeout(() => {
-        spawnBrief(1);
-        setIsFinalBriefPending(false);
-      }, spawnConfig.finalBriefDelayMs);
-    }
+    console.log("End condition check:", {
+      briefsLength: briefs.length,
+      allResolved,
+      briefsSpawned,
+      totalBriefs: spawnConfig.totalBriefs,
+    });
 
+    // Game ends when all briefs are spawned AND all are resolved
     if (briefsSpawned >= spawnConfig.totalBriefs && allResolved) {
+      console.log("Game ending");
       setPhase("ended");
     }
   }, [briefs, briefsSpawned, phase]);
