@@ -1,0 +1,18 @@
+{
+  "normal": [
+    "Ready for the next challenge.",
+    "Let's get to work.",
+    "I'm feeling motivated.",
+    "Another day, another solution.",
+    "We can handle anything.",
+    "I've got a good feeling about this."
+  ],
+  "injured": [
+    "I need a moment to recover.",
+    "That was a close one.",
+    "I'll be back on my feet soon.",
+    "Just a scratch.",
+    "We need to be more careful.",
+    "I'm not giving up that easily."
+  ]
+}

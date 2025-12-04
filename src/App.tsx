@@ -10,10 +10,12 @@ import { useInterval } from "./game/useInterval";
 import consultantsData from "./data/consultants.json";
 import briefsData from "./data/brief_archetypes.json";
 import spawnConfig from "./data/spawn_config.json";
+import dialogueData from "./data/dialogue.json";
 import { ConsultantBar } from "./components/ConsultantBar";
 import { MarkerLayer } from "./components/MarkerLayer";
 import { BriefModal } from "./components/BriefModal";
 import PauseMenu from "./components/PauseMenu";
+import SpeechBubble from "./components/SpeechBubble";
 
 type GamePhase = "intro" | "playing" | "ended";
 
@@ -30,6 +32,10 @@ const App: React.FC = () => {
   const [failCount, setFailCount] = useState(0);
   const [outcomeMessage, setOutcomeMessage] = useState<string | null>(null);
   const [spawnDelay, setSpawnDelay] = useState<number | null>(null);
+  const [dialogue, setDialogue] = useState<{
+    consultantId: string;
+    text: string;
+  } | null>(null);
 
   // extras / options (logic not wired in yet)
   const [showExtras, setShowExtras] = useState(false);
@@ -38,6 +44,7 @@ const App: React.FC = () => {
 
   const timerIntervalRef = useRef<number | null>(null);
   const spawnTimeoutRef = useRef<number | null>(null);
+  const dialogueTimeoutRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
 
   // initialise consultants
@@ -106,6 +113,44 @@ const App: React.FC = () => {
     spawnBrief,
     isPaused || isBriefModalOpen ? null : spawnDelay
   );
+
+  // dialogue system
+  const triggerDialogue = () => {
+    if (isPaused || isBriefModalOpen || dialogue) return;
+
+    // small chance to trigger
+    if (Math.random() > 0.1) return;
+
+    const availableConsultants = consultants.filter((c) => c.status !== "out");
+    if (availableConsultants.length === 0) return;
+
+    const consultant =
+      availableConsultants[
+        Math.floor(Math.random() * availableConsultants.length)
+      ];
+    const lines = dialogueData[consultant.status as keyof typeof dialogueData];
+    if (!lines) return;
+
+    const text = lines[Math.floor(Math.random() * lines.length)];
+    setDialogue({ consultantId: consultant.id, text });
+  };
+
+  useInterval(
+    triggerDialogue,
+    isPaused || isBriefModalOpen ? null : 8000
+  );
+
+  // auto-clear dialogue
+  useEffect(() => {
+    if (dialogue) {
+      if (dialogueTimeoutRef.current) {
+        clearTimeout(dialogueTimeoutRef.current);
+      }
+      dialogueTimeoutRef.current = window.setTimeout(() => {
+        setDialogue(null);
+      }, 4000);
+    }
+  }, [dialogue]);
 
   // timer tick (100ms)
   useEffect(() => {
@@ -670,6 +715,7 @@ const App: React.FC = () => {
             onMarkerClick={handleMarkerClick}
           />
 
+          <SpeechBubble dialogue={dialogue} consultants={consultants} />
           <ConsultantBar consultants={consultants} />
 
           {selectedBrief && (
