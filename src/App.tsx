@@ -56,6 +56,11 @@ const App: React.FC = () => {
   const dialogueTimeoutRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
 
+  // Track the count of active briefs for stable dependency
+  const activeBriefCount = useMemo(() => {
+    return briefs.filter((b) => b.status === "pending").length;
+  }, [briefs]);
+
   const isFirstBriefPending = useMemo(() => {
     if (briefs.length === 0) return false;
     const firstBrief = briefs.find((b) => b.instanceIndex === 0);
@@ -139,7 +144,7 @@ const App: React.FC = () => {
       isBriefModalOpen,
       isFirstBriefPending,
       briefsSpawned,
-      activeBriefs: briefs.filter((b) => b.status === "pending").length,
+      activeBriefCount,
     });
 
     // Don't spawn if paused, modal is open, or first brief is still pending
@@ -168,10 +173,9 @@ const App: React.FC = () => {
     }
 
     // Smart pacing: Check how many briefs are currently active
-    const activeBriefs = briefs.filter((b) => b.status === "pending");
     const maxConcurrentBriefs = 2; // Don't let more than 2 briefs be active at once
 
-    console.log("Active briefs:", activeBriefs.length, "Max:", maxConcurrentBriefs);
+    console.log("Active briefs:", activeBriefCount, "Max:", maxConcurrentBriefs);
 
     // Stop spawning if we've spawned all briefs (except the final one handled separately)
     if (briefsSpawned >= spawnConfig.totalBriefs - 1) {
@@ -180,13 +184,13 @@ const App: React.FC = () => {
     }
 
     // If we already have the max number of active briefs, wait
-    if (activeBriefs.length >= maxConcurrentBriefs) {
+    if (activeBriefCount >= maxConcurrentBriefs) {
       console.log("Too many active briefs");
       return;
     }
 
     // Calculate how many briefs we can spawn
-    const availableSlots = maxConcurrentBriefs - activeBriefs.length;
+    const availableSlots = maxConcurrentBriefs - activeBriefCount;
     const remainingBriefs = spawnConfig.totalBriefs - 1 - briefsSpawned; // -1 because final is special
     
     // Determine spawn count and delay based on game progression
@@ -233,7 +237,7 @@ const App: React.FC = () => {
         clearTimeout(spawnTimeoutRef.current);
       }
     };
-  }, [briefsSpawned, briefs, phase, isPaused, isBriefModalOpen, isFirstBriefPending, isFinalBriefPending]);
+  }, [briefsSpawned, activeBriefCount, phase, isPaused, isBriefModalOpen, isFirstBriefPending, isFinalBriefPending]);
 
   // dialogue system
   const triggerDialogue = () => {
