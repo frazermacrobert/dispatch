@@ -61,7 +61,7 @@ body {
   inset: 0;
   background: radial-gradient(circle at 20% 0, #22c55e11, transparent),
     radial-gradient(circle at 80% 100%, #38bdf811, transparent),
-    url("/newldn.jpg");
+    url("/worldmap.jpg");
   background-size: cover;
   background-position: center;
   filter: saturate(0.7) contrast(1.1) brightness(0.9);
