@@ -150,14 +150,52 @@ const App: React.FC = () => {
       return;
     }
 
-    // Subsequent spawns follow the sequence.
-    // We subtract 1 from briefsSpawned because the first brief is handled separately.
-    const sequenceIndex = (briefsSpawned - 1) % spawnConfig.spawnSequence.length;
-    const { count, delayMs } = spawnConfig.spawnSequence[sequenceIndex];
+    // Smart pacing: Check how many briefs are currently active
+    const activeBriefs = briefs.filter((b) => b.status === "pending");
+    const maxConcurrentBriefs = 2; // Don't let more than 2 briefs be active at once
 
-    spawnTimeoutRef.current = window.setTimeout(() => {
-      spawnBrief(count);
-    }, delayMs);
+    // If we already have the max number of active briefs, wait
+    if (activeBriefs.length >= maxConcurrentBriefs) {
+      return;
+    }
+
+    // Calculate how many briefs we can spawn
+    const availableSlots = maxConcurrentBriefs - activeBriefs.length;
+    
+    // Determine spawn count and delay based on game progression
+    let spawnCount = 1;
+    let delayMs = 4000; // Base delay of 4 seconds
+
+    // Early game (briefs 1-5): Gentle introduction, spawn 1 at a time
+    if (briefsSpawned <= 5) {
+      spawnCount = 1;
+      delayMs = 5000; // 5 second delay for early game
+    }
+    // Mid game (briefs 6-12): Ramp up slightly, occasional pairs
+    else if (briefsSpawned <= 12) {
+      spawnCount = Math.random() < 0.3 ? 2 : 1; // 30% chance of 2 briefs
+      delayMs = 4000;
+    }
+    // Late game (briefs 13-18): More challenging, but still fair
+    else if (briefsSpawned <= 18) {
+      spawnCount = Math.random() < 0.4 ? 2 : 1; // 40% chance of 2 briefs
+      delayMs = 3000;
+    }
+    // Final push (briefs 19+): Final challenge
+    else {
+      spawnCount = 1;
+      delayMs = 3000;
+    }
+
+    // Respect available slots
+    spawnCount = Math.min(spawnCount, availableSlots);
+
+    // Only spawn if we have slots available
+    if (spawnCount > 0) {
+      spawnTimeoutRef.current = window.setTimeout(() => {
+        spawnBrief(spawnCount);
+      }, delayMs);
+    }
 
     // cleanup on unmount or when dependencies change.
     return () => {
@@ -165,7 +203,7 @@ const App: React.FC = () => {
         clearTimeout(spawnTimeoutRef.current);
       }
     };
-  }, [briefsSpawned, phase, isPaused, isBriefModalOpen, isFirstBriefPending]);
+  }, [briefsSpawned, briefs, phase, isPaused, isBriefModalOpen, isFirstBriefPending]);
 
   // dialogue system
   const triggerDialogue = () => {
