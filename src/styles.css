@@ -918,27 +918,81 @@ body {
 }
 
 .start-screen {
-  text-align: center;
+  transition: opacity 0.5s ease-out;
+}
+
+.phase-playing .start-screen,
+.phase-ended .start-screen {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.start-screen__gradient {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 55% 0 0 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent);
+}
+
+.start-screen__title-block {
+  position: absolute;
+  left: 3rem;
+  bottom: 7rem;
   color: white;
 }
 
-.start-screen h1 {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+.start-screen__presenter {
+  font-size: 0.9rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
 }
 
-.start-screen p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+.start-screen__title {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 0.4em;
 }
 
-.start-screen button {
-  font-size: 1.2rem;
-  padding: 0.8rem 1.5rem;
+.start-screen__edition {
+  font-size: 1rem;
+  margin-top: 0.3rem;
+  opacity: 0.85;
+}
+
+.start-screen__actions {
+  position: absolute;
+  left: 3rem;
+  bottom: 2.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.start-screen__button-play {
+  min-width: 140px;
+  padding: 0.9rem 1.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(59, 130, 246, 0.8);
+  background: linear-gradient(to bottom, #3b82f6, #2563eb);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.7);
+}
+
+.start-screen__button-extras {
+  min-width: 140px;
+  padding: 0.9rem 1.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.85);
+  color: #e5e7eb;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.7);
 }
 
 @keyframes fadeInOut {
