@@ -569,101 +569,25 @@ const App: React.FC = () => {
 
       {/* INTRO / TITLE SCREEN */}
       {phase === "intro" && (
-        <>
+        <div className="start-screen">
           {/* subtle dark gradient at bottom for menu */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "55% 0 0 0",
-              background:
-                "linear-gradient(to top, rgba(15,23,42,0.95), transparent)",
-            }}
-          />
+          <div className="start-screen__gradient" />
 
           {/* title block bottom left */}
-          <div
-            style={{
-              position: "absolute",
-              left: "3rem",
-              bottom: "7rem",
-              color: "white",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "0.9rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                opacity: 0.8,
-                marginBottom: "0.25rem",
-              }}
-            >
-              Scarletabbott presents
-            </div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: "2.6rem",
-                fontWeight: 800,
-                letterSpacing: "0.4em",
-              }}
-            >
-              DISPATCH
-            </h1>
-            <div
-              style={{
-                fontSize: "1rem",
-                marginTop: "0.3rem",
-                opacity: 0.85,
-              }}
-            >
-              Agency Edition
-            </div>
+          <div className="start-screen__title-block">
+            <div className="start-screen__presenter">Scarletabbott presents</div>
+            <h1 className="start-screen__title">DISPATCH</h1>
+            <div className="start-screen__edition">Agency Edition</div>
           </div>
 
           {/* main menu buttons bottom left */}
-          <div
-            style={{
-              position: "absolute",
-              left: "3rem",
-              bottom: "2.5rem",
-              display: "flex",
-              gap: "1rem",
-            }}
-          >
-            <button
-              onClick={startGame}
-              style={{
-                minWidth: "140px",
-                padding: "0.9rem 1.8rem",
-                borderRadius: "999px",
-                border: "1px solid rgba(59,130,246,0.8)",
-                background:
-                  "linear-gradient(to bottom, #3b82f6, #2563eb)",
-                color: "white",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                cursor: "pointer",
-                boxShadow: "0 10px 30px rgba(15,23,42,0.7)",
-              }}
-            >
+          <div className="start-screen__actions">
+            <button className="start-screen__button-play" onClick={startGame}>
               Play
             </button>
-
             <button
+              className="start-screen__button-extras"
               onClick={() => setShowExtras(true)}
-              style={{
-                minWidth: "140px",
-                padding: "0.9rem 1.6rem",
-                borderRadius: "999px",
-                border: "1px solid rgba(148,163,184,0.7)",
-                background: "rgba(15,23,42,0.85)",
-                color: "#e5e7eb",
-                fontWeight: 500,
-                fontSize: "0.9rem",
-                cursor: "pointer",
-                boxShadow: "0 10px 30px rgba(15,23,42,0.7)",
-              }}
             >
               Extras
             </button>
@@ -809,7 +733,7 @@ const App: React.FC = () => {
                       }}
                     >
                       {briefsExpire ? "On" : "Off"}
-                  </button>
+                    </button>
                   </div>
 
                   {/* patchwork hub */}
@@ -854,7 +778,7 @@ const App: React.FC = () => {
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {/* PLAYING */}
