@@ -568,6 +568,26 @@ const App: React.FC = () => {
       )}
 
       {/* INTRO / TITLE SCREEN */}
+      {phase === "intro" && (
+        <div className="start-screen">
+          {/* subtle dark gradient at bottom for menu */}
+          <div className="start-screen__gradient" />
+
+          {/* title block bottom left */}
+          <div className="start-screen__title-block">
+            <div className="start-screen__presenter">Scarletabbott presents</div>
+            <h1 className="start-screen__title">DISPATCH</h1>
+            <div className="start-screen__edition">Agency Edition</div>
+          </div>
+
+          {/* main menu buttons bottom left */}
+          <div className="start-screen__actions">
+            <button className="start-screen__button-play" onClick={startGame}>
+              Play
+            </button>
+            <button
+              className="start-screen__button-extras"
+              onClick={() => setShowExtras(true)}
       <div className="start-screen">
         {/* subtle dark gradient at bottom for menu */}
         <div className="start-screen__gradient" />
@@ -754,6 +774,8 @@ const App: React.FC = () => {
                         color: "#9ca3af",
                       }}
                     >
+                      {briefsExpire ? "On" : "Off"}
+                    </button>
                       Visit other games and resources.
                     </div>
                   </div>
@@ -775,6 +797,9 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
+          )}
+        </div>
+      )}
           </div>
         )}
       </div>
