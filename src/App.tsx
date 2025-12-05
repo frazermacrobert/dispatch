@@ -568,294 +568,216 @@ const App: React.FC = () => {
       )}
 
       {/* INTRO / TITLE SCREEN */}
-      {phase === "intro" && (
-        <>
-          {/* subtle dark gradient at bottom for menu */}
-          <div
-            style={{
-              position: "absolute",
-              inset: "55% 0 0 0",
-              background:
-                "linear-gradient(to top, rgba(15,23,42,0.95), transparent)",
-            }}
-          />
+      <div className="start-screen">
+        {/* subtle dark gradient at bottom for menu */}
+        <div className="start-screen__gradient" />
 
-          {/* title block bottom left */}
-          <div
-            style={{
-              position: "absolute",
-              left: "3rem",
-              bottom: "7rem",
-              color: "white",
-            }}
+        {/* title block bottom left */}
+        <div className="start-screen__title-block">
+          <div className="start-screen__presenter">Scarletabbott presents</div>
+          <h1 className="start-screen__title">DISPATCH</h1>
+          <div className="start-screen__edition">Agency Edition</div>
+        </div>
+
+        {/* main menu buttons bottom left */}
+        <div className="start-screen__actions">
+          <button className="start-screen__button-play" onClick={startGame}>
+            Play
+          </button>
+          <button
+            className="start-screen__button-extras"
+            onClick={() => setShowExtras(true)}
           >
-            <div
-              style={{
-                fontSize: "0.9rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                opacity: 0.8,
-                marginBottom: "0.25rem",
-              }}
-            >
-              Scarletabbott presents
-            </div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: "2.6rem",
-                fontWeight: 800,
-                letterSpacing: "0.4em",
-              }}
-            >
-              DISPATCH
-            </h1>
-            <div
-              style={{
-                fontSize: "1rem",
-                marginTop: "0.3rem",
-                opacity: 0.85,
-              }}
-            >
-              Agency Edition
-            </div>
-          </div>
+            Extras
+          </button>
+        </div>
 
-          {/* main menu buttons bottom left */}
+        {/* extras popup */}
+        {showExtras && (
           <div
             style={{
               position: "absolute",
-              left: "3rem",
-              bottom: "2.5rem",
+              inset: 0,
               display: "flex",
-              gap: "1rem",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(15,23,42,0.7)",
+              backdropFilter: "blur(4px)",
+              zIndex: 20,
             }}
           >
-            <button
-              onClick={startGame}
-              style={{
-                minWidth: "140px",
-                padding: "0.9rem 1.8rem",
-                borderRadius: "999px",
-                border: "1px solid rgba(59,130,246,0.8)",
-                background:
-                  "linear-gradient(to bottom, #3b82f6, #2563eb)",
-                color: "white",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                cursor: "pointer",
-                boxShadow: "0 10px 30px rgba(15,23,42,0.7)",
-              }}
-            >
-              Play
-            </button>
-
-            <button
-              onClick={() => setShowExtras(true)}
-              style={{
-                minWidth: "140px",
-                padding: "0.9rem 1.6rem",
-                borderRadius: "999px",
-                border: "1px solid rgba(148,163,184,0.7)",
-                background: "rgba(15,23,42,0.85)",
-                color: "#e5e7eb",
-                fontWeight: 500,
-                fontSize: "0.9rem",
-                cursor: "pointer",
-                boxShadow: "0 10px 30px rgba(15,23,42,0.7)",
-              }}
-            >
-              Extras
-            </button>
-          </div>
-
-          {/* extras popup */}
-          {showExtras && (
             <div
               style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(15,23,42,0.7)",
-                backdropFilter: "blur(4px)",
-                zIndex: 20,
+                width: "380px",
+                maxWidth: "90vw",
+                borderRadius: "1rem",
+                background:
+                  "radial-gradient(circle at top, rgba(148,163,184,0.2), transparent), rgba(15,23,42,0.98)",
+                border: "1px solid rgba(148,163,184,0.4)",
+                boxShadow: "0 18px 50px rgba(15,23,42,0.9)",
+                padding: "1.25rem 1.3rem",
+                color: "#e5e7eb",
+                fontSize: "0.9rem",
               }}
             >
               <div
                 style={{
-                  width: "380px",
-                  maxWidth: "90vw",
-                  borderRadius: "1rem",
-                  background:
-                    "radial-gradient(circle at top, rgba(148,163,184,0.2), transparent), rgba(15,23,42,0.98)",
-                  border: "1px solid rgba(148,163,184,0.4)",
-                  boxShadow: "0 18px 50px rgba(15,23,42,0.9)",
-                  padding: "1.25rem 1.3rem",
-                  color: "#e5e7eb",
-                  fontSize: "0.9rem",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "0.75rem",
                 }}
               >
+                <div
+                  style={{
+                    fontSize: "0.9rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.16em",
+                    color: "#9ca3af",
+                  }}
+                >
+                  Extras
+                </div>
+                <button
+                  onClick={() => setShowExtras(false)}
+                  style={{
+                    borderRadius: "999px",
+                    border: "1px solid rgba(148,163,184,0.6)",
+                    background: "rgba(15,23,42,0.9)",
+                    color: "#e5e7eb",
+                    fontSize: "0.75rem",
+                    padding: "0.25rem 0.6rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.7rem",
+                }}
+              >
+                {/* randomise team */}
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    marginBottom: "0.75rem",
                   }}
                 >
-                  <div
-                    style={{
-                      fontSize: "0.9rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.16em",
-                      color: "#9ca3af",
-                    }}
-                  >
-                    Extras
+                  <div>
+                    <div>Randomise team</div>
+                    <div
+                      style={{
+                        fontSize: "0.75rem",
+                        color: "#9ca3af",
+                      }}
+                    >
+                      Unlock secret guests and wild teams.
+                    </div>
                   </div>
                   <button
-                    onClick={() => setShowExtras(false)}
+                    onClick={() => setRandomiseTeam((v) => !v)}
                     style={{
+                      padding: "0.35rem 0.9rem",
                       borderRadius: "999px",
-                      border: "1px solid rgba(148,163,184,0.6)",
-                      background: "rgba(15,23,42,0.9)",
-                      color: "#e5e7eb",
-                      fontSize: "0.75rem",
-                      padding: "0.25rem 0.6rem",
+                      border: "1px solid rgba(148,163,184,0.7)",
+                      background: randomiseTeam
+                        ? "rgba(34,197,94,0.2)"
+                        : "rgba(15,23,42,0.9)",
+                      color: randomiseTeam ? "#4ade80" : "#e5e7eb",
+                      fontSize: "0.8rem",
                       cursor: "pointer",
                     }}
                   >
-                    Close
+                    {randomiseTeam ? "On" : "Off"}
                   </button>
                 </div>
 
+                {/* briefs expire */}
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "0.7rem",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  {/* randomise team */}
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div>
-                      <div>Randomise team</div>
-                      <div
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        Unlock secret guests and wild teams.
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setRandomiseTeam((v) => !v)}
+                  <div>
+                    <div>Briefs expire</div>
+                    <div
                       style={{
-                        padding: "0.35rem 0.9rem",
-                        borderRadius: "999px",
-                        border: "1px solid rgba(148,163,184,0.7)",
-                        background: randomiseTeam
-                          ? "rgba(34,197,94,0.2)"
-                          : "rgba(15,23,42,0.9)",
-                        color: randomiseTeam ? "#4ade80" : "#e5e7eb",
-                        fontSize: "0.8rem",
-                        cursor: "pointer",
+                        fontSize: "0.75rem",
+                        color: "#9ca3af",
                       }}
                     >
-                      {randomiseTeam ? "On" : "Off"}
-                    </button>
+                      Turn off timers for a slower planning session.
+                    </div>
                   </div>
-
-                  {/* briefs expire */}
-                  <div
+                  <button
+                    onClick={() => setBriefsExpire((v) => !v)}
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      padding: "0.35rem 0.9rem",
+                      borderRadius: "999px",
+                      border: "1px solid rgba(148,163,184,0.7)",
+                      background: briefsExpire
+                        ? "rgba(34,197,94,0.2)"
+                        : "rgba(15,23,42,0.9)",
+                      color: briefsExpire ? "#4ade80" : "#e5e7eb",
+                      fontSize: "0.8rem",
+                      cursor: "pointer",
                     }}
                   >
-                    <div>
-                      <div>Briefs expire</div>
-                      <div
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        Turn off timers for a slower planning session.
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setBriefsExpire((v) => !v)}
-                      style={{
-                        padding: "0.35rem 0.9rem",
-                        borderRadius: "999px",
-                        border: "1px solid rgba(148,163,184,0.7)",
-                        background: briefsExpire
-                          ? "rgba(34,197,94,0.2)"
-                          : "rgba(15,23,42,0.9)",
-                        color: briefsExpire ? "#4ade80" : "#e5e7eb",
-                        fontSize: "0.8rem",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {briefsExpire ? "On" : "Off"}
+                    {briefsExpire ? "On" : "Off"}
                   </button>
-                  </div>
+                </div>
 
-                  {/* patchwork hub */}
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      borderTop: "1px solid rgba(31,41,55,0.9)",
-                      paddingTop: "0.7rem",
-                      marginTop: "0.2rem",
-                    }}
-                  >
-                    <div>
-                      <div>Patchwork hub</div>
-                      <div
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        Visit other games and resources.
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => alert("Patchwork hub coming soon")}
+                {/* patchwork hub */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderTop: "1px solid rgba(31,41,55,0.9)",
+                    paddingTop: "0.7rem",
+                    marginTop: "0.2rem",
+                  }}
+                >
+                  <div>
+                    <div>Patchwork hub</div>
+                    <div
                       style={{
-                        padding: "0.35rem 0.9rem",
-                        borderRadius: "999px",
-                        border: "1px solid rgba(59,130,246,0.8)",
-                        background:
-                          "linear-gradient(to bottom, #3b82f6, #2563eb)",
-                        color: "white",
-                        fontSize: "0.8rem",
-                        cursor: "pointer",
+                        fontSize: "0.75rem",
+                        color: "#9ca3af",
                       }}
                     >
-                      Visit
-                    </button>
+                      Visit other games and resources.
+                    </div>
                   </div>
+                  <button
+                    onClick={() => alert("Patchwork hub coming soon")}
+                    style={{
+                      padding: "0.35rem 0.9rem",
+                      borderRadius: "999px",
+                      border: "1px solid rgba(59,130,246,0.8)",
+                      background:
+                        "linear-gradient(to bottom, #3b82f6, #2563eb)",
+                      color: "white",
+                      fontSize: "0.8rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Visit
+                  </button>
                 </div>
               </div>
             </div>
-          )}
-        </>
-      )}
+          </div>
+        )}
+      </div>
 
       {/* PLAYING */}
       {phase === "playing" && (
