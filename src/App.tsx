@@ -19,15 +19,6 @@ import Intercom from "./components/Intercom";
 
 type GamePhase = "intro" | "playing" | "ended";
 
-// Type for dialogue data structure
-type DialogueData = {
-  [consultantId: string]: {
-    normal: string[];
-    injured: string[];
-    cooldown: string[];
-  };
-};
-
 const App: React.FC = () => {
   const [phase, setPhase] = useState<GamePhase>("intro");
   const [isPaused, setIsPaused] = useState(false);
@@ -238,59 +229,94 @@ const App: React.FC = () => {
     };
   }, [briefsSpawned, activeBriefCount, phase, isPaused, isBriefModalOpen, isFirstBriefPending]);
 
-  // dialogue system
+  // dialogue system - story-driven based on game progress
   const triggerDialogue = () => {
     if (isPaused || isBriefModalOpen || dialogue) return;
 
-    // 25% chance to trigger dialogue (increased for better story flow)
-    if (Math.random() > 0.25) return;
+    // Determine dialogue type based on game state
+    let dialogueType: "gameStart" | "success" | "failure" | null = null;
+    let eligibleConsultants: string[] = [];
 
-    // Filter consultants who are available to speak
-    const availableConsultants = consultants.filter((c) => c.status !== "out");
-    if (availableConsultants.length === 0) return;
-
-    // Pick a random consultant
-    const consultant =
-      availableConsultants[
-        Math.floor(Math.random() * availableConsultants.length)
-      ];
-
-    // Get the consultant-specific dialogue based on their current state
-    const consultantDialogue = (dialogueData as DialogueData)[consultant.id];
-    if (!consultantDialogue) return;
-
-    // Determine which set of lines to use based on consultant state
-    let lines: string[];
-    if (consultant.state === "cooldown") {
-      lines = consultantDialogue.cooldown || consultantDialogue.normal;
-    } else if (consultant.status === "injured") {
-      lines = consultantDialogue.injured || consultantDialogue.normal;
-    } else {
-      lines = consultantDialogue.normal;
+    // Game start: first brief only
+    if (briefsSpawned === 1 && successCount === 0 && failCount === 0) {
+      dialogueType = "gameStart";
+      // Any consultant not out can speak
+      eligibleConsultants = consultants
+        .filter((c) => c.status !== "out")
+        .map((c) => c.id);
+    }
+    // Success dialogue: triggered when success count increases
+    else if (successCount > 0) {
+      // Random chance (40%) to trigger success dialogue
+      if (Math.random() < 0.4) {
+        dialogueType = "success";
+        // Pick from 3 random consultants who aren't out
+        const availableConsultants = consultants.filter((c) => c.status !== "out");
+        const shuffled = [...availableConsultants].sort(() => Math.random() - 0.5);
+        eligibleConsultants = shuffled.slice(0, 3).map((c) => c.id);
+      }
+    }
+    // Failure dialogue: triggered when fail count increases
+    if (failCount > 0 && !dialogueType) {
+      // Random chance (40%) to trigger failure dialogue
+      if (Math.random() < 0.4) {
+        dialogueType = "failure";
+        // Pick from 3 random consultants who aren't out
+        const availableConsultants = consultants.filter((c) => c.status !== "out");
+        const shuffled = [...availableConsultants].sort(() => Math.random() - 0.5);
+        eligibleConsultants = shuffled.slice(0, 3).map((c) => c.id);
+      }
     }
 
-    if (!lines || lines.length === 0) return;
+    if (!dialogueType || eligibleConsultants.length === 0) return;
 
-    // Pick a random line from the appropriate set
-    const text = lines[Math.floor(Math.random() * lines.length)];
-    setDialogue({ consultantId: consultant.id, text });
+    // Pick one consultant from eligible list
+    const consultantId = eligibleConsultants[Math.floor(Math.random() * eligibleConsultants.length)];
+    const consultant = consultants.find((c) => c.id === consultantId);
+    if (!consultant) return;
+
+    // Get appropriate dialogue
+    const dialogueContent = (dialogueData as any)[dialogueType];
+    if (!dialogueContent) return;
+
+    let text: string;
+    
+    if (dialogueType === "gameStart") {
+      // Game start has simple arrays per consultant
+      const lines = dialogueContent[consultantId];
+      if (!lines || lines.length === 0) return;
+      text = lines[Math.floor(Math.random() * lines.length)];
+    } else {
+      // Success/failure have state-based dialogue
+      const consultantDialogue = dialogueContent[consultantId];
+      if (!consultantDialogue) return;
+
+      // Choose based on consultant's current status
+      const statusKey = consultant.status === "injured" ? "injured" : "normal";
+      const lines = consultantDialogue[statusKey];
+      if (!lines || lines.length === 0) return;
+      
+      text = lines[Math.floor(Math.random() * lines.length)];
+    }
+
+    setDialogue({ consultantId, text });
   };
 
   useInterval(
     triggerDialogue,
-    isPaused || isBriefModalOpen ? null : 12000 // Increased to 12 seconds for better pacing
+    isPaused || isBriefModalOpen ? null : 8000 // Check every 8 seconds
   );
 
-  // auto-clear dialogue after ticker completes
+  // auto-clear dialogue after float animation completes
   useEffect(() => {
     if (dialogue) {
       if (dialogueTimeoutRef.current) {
         clearTimeout(dialogueTimeoutRef.current);
       }
-      // Clear after 6 seconds (matching ticker duration)
+      // Clear after 5 seconds (matching float duration: 0.5s enter + 4s read + 0.5s exit)
       dialogueTimeoutRef.current = window.setTimeout(() => {
         setDialogue(null);
-      }, 6000);
+      }, 5000);
     }
   }, [dialogue]);
 
