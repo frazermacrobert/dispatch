@@ -4,18 +4,18 @@ import {
   ActiveBrief,
   ConsultantState,
   ConsultantStatus,
-} from "./game/types";
-import { evaluateMissionOutcome, createBriefInstance } from "./game/scoring";
-import { useInterval } from "./game/useInterval";
-import consultantsData from "./data/consultants.json";
-import briefsData from "./data/brief_archetypes.json";
-import spawnConfig from "./data/spawn_config.json";
-import dialogueData from "./data/dialogue.json";
-import { ConsultantBar } from "./components/ConsultantBar";
-import { MarkerLayer } from "./components/MarkerLayer";
-import { BriefModal } from "./components/BriefModal";
-import PauseMenu from "./components/PauseMenu";
-import Intercom from "./components/Intercom";
+} from "../game/types";
+import { evaluateMissionOutcome, createBriefInstance } from "../game/scoring";
+import { useInterval } from "../game/useInterval";
+import consultantsData from "../data/consultants.json";
+import briefsData from "../data/brief_archetypes.json";
+import spawnConfig from "../data/spawn_config.json";
+import dialogueData from "../data/dialogue.json";
+import { ConsultantBar } from "./ConsultantBar";
+import { MarkerLayer } from "./MarkerLayer";
+import { BriefModal } from "./BriefModal";
+import PauseMenu from "./PauseMenu";
+import Intercom from "./Intercom";
 
 type GamePhase = "intro" | "playing" | "ended";
 
