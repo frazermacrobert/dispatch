@@ -1,38 +1,51 @@
-/* ------------------------------------------------------
-   GLOBAL WRAPPER
-------------------------------------------------------- */
+/* ==========================================
+   RESET & BASE
+========================================== */
 
-#app-root {
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  background-color: #000;
-  color: white;
-  font-family: 'Segoe UI', sans-serif;
-  position: relative;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Intro screen background */
-#app-root.phase-intro {
-  background-image: 
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.6)),
-    url("/startbg.png");
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+}
+
+/* ==========================================
+   GAME CONTAINER - ALL PHASES
+========================================== */
+
+.game-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  color: white;
+}
+
+/* INTRO PHASE */
+.game-container.phase-intro {
+  background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.6)),
+              url("/startbg.png");
   background-size: cover;
   background-position: center;
 }
 
-/* ✅ FIXED: Clear ALL backgrounds when game starts */
-#app-root.phase-playing,
-#app-root.phase-ended {
-  background-image: none !important;
-  background-color: #000;
+/* PLAYING PHASE */
+.game-container.phase-playing {
+  background: #000;
 }
 
-/* ------------------------------------------------------
-   WORLD MAP (only visible during playing/ended phases)
-------------------------------------------------------- */
+/* ENDED PHASE */
+.game-container.phase-ended {
+  background: #000;
+}
+
+/* ==========================================
+   WORLD MAP (Playing & Ended only)
+========================================== */
 
 .world-map {
   position: absolute;
@@ -53,9 +66,9 @@
   z-index: 1;
 }
 
-/* ------------------------------------------------------
+/* ==========================================
    START SCREEN
-------------------------------------------------------- */
+========================================== */
 
 .start-screen {
   position: absolute;
@@ -63,13 +76,8 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  align-items: flex-start;
-  padding-bottom: 2.5rem;
-  padding-left: 3rem;
-  text-align: left;
-  animation: fadeIn ease 1s;
+  padding: 3rem;
   z-index: 10;
-  pointer-events: auto;
 }
 
 .start-screen__gradient {
@@ -80,7 +88,6 @@
 }
 
 .start-screen__title-block {
-  color: white;
   margin-bottom: 2rem;
 }
 
@@ -93,10 +100,10 @@
 }
 
 .start-screen__title {
-  margin: 0;
   font-size: 2.6rem;
   font-weight: 800;
   letter-spacing: 0.4em;
+  margin: 0;
 }
 
 .start-screen__edition {
@@ -108,7 +115,6 @@
 .start-screen__actions {
   display: flex;
   gap: 1rem;
-  z-index: 11;
 }
 
 .start-screen__button-play,
@@ -142,90 +148,173 @@
   box-shadow: 0 12px 35px rgba(15,23,42,0.8);
 }
 
-/* ------------------------------------------------------
-   GAMEPLAY SCREEN ELEMENTS
-------------------------------------------------------- */
+/* ==========================================
+   EXTRAS MODAL
+========================================== */
 
-.question-container {
-  padding: 40px;
-  max-width: 1000px;
-  margin: 0 auto;
-  text-align: center;
+.extras-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15,23,42,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 20;
 }
 
-h2 {
-  font-size: 2.8rem;
-  margin-bottom: 22px;
-  text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+.extras-modal {
+  width: 380px;
+  max-width: 90vw;
+  border-radius: 1rem;
+  background: radial-gradient(circle at top, rgba(148,163,184,0.2), transparent),
+              rgba(15,23,42,0.98);
+  border: 1px solid rgba(148,163,184,0.4);
+  box-shadow: 0 18px 50px rgba(15,23,42,0.9);
+  padding: 1.25rem 1.3rem;
+  color: #e5e7eb;
+  font-size: 0.9rem;
 }
 
-.button {
-  padding: 14px 32px;
-  margin: 10px 0;
+.extras-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.extras-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #9ca3af;
+}
+
+.extras-close {
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.6);
+  background: rgba(15,23,42,0.9);
+  color: #e5e7eb;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+}
+
+.extras-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.extras-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.extras-option.extras-divider {
+  border-top: 1px solid rgba(31,41,55,0.9);
+  padding-top: 0.7rem;
+  margin-top: 0.2rem;
+}
+
+.extras-description {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.extras-toggle {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.7);
+  background: rgba(15,23,42,0.9);
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.extras-toggle.active {
+  background: rgba(34,197,94,0.2);
+  color: #4ade80;
+}
+
+.extras-button-primary {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(59,130,246,0.8);
+  background: linear-gradient(to bottom, #3b82f6, #2563eb);
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* ==========================================
+   GAME HEADER (Playing phase)
+========================================== */
+
+.game-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  background: rgba(15, 23, 42, 0.9);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.game-header__briefs {
   font-size: 1.2rem;
   font-weight: 600;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.game-header__right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.game-header__score {
+  display: flex;
+  gap: 2rem;
+  font-size: 1.1rem;
+}
+
+.score-success {
+  color: #10b981;
+}
+
+.score-fail {
+  color: #ef4444;
+}
+
+/* ==========================================
+   BUTTON (Generic)
+========================================== */
+
+.button {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(148,163,184,0.5);
+  background: rgba(59, 130, 246, 0.2);
   color: white;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
   cursor: pointer;
-  transition: all 0.25s ease;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transition: all 0.2s ease;
 }
 
 .button:hover {
-  background: rgba(255,255,255,0.22);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+  background: rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
 }
 
-/* Multiple choice buttons (answers) */
-.buttons-container button {
-  padding: 16px 26px;
-  margin: 12px 0;
-  font-size: 1.4rem;
-  width: 100%;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(8px);
-  color: white;
-  transition: all 0.25s ease;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-}
-
-.buttons-container button:hover {
-  background: rgba(255,255,255,0.25);
-  transform: translateY(-2px);
-}
-
-/* Result section */
-.result-section {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.result-section button {
-  padding: 14px 28px;
-  font-size: 1.3rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(8px);
-  color: white;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.result-section button:hover {
-  background: rgba(255,255,255,0.25);
-}
-
-/* ------------------------------------------------------
+/* ==========================================
    PAUSE MENU
-------------------------------------------------------- */
+========================================== */
 
 .pause-menu-overlay {
   position: fixed;
@@ -258,9 +347,80 @@ h2 {
   margin: 1rem 0;
 }
 
-/* ------------------------------------------------------
-   MARKER ANIMATIONS
-------------------------------------------------------- */
+/* ==========================================
+   END SCREEN
+========================================== */
+
+.end-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 3rem;
+  border-radius: 1rem;
+  min-width: 400px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  z-index: 100;
+}
+
+.end-screen__title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.end-screen__stat {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.stat-success {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.stat-fail {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.end-screen__rate {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.7;
+}
+
+.end-screen__button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.end-screen__button:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   MARKERS & TIMERS
+========================================== */
+
+.timer {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
 
 @keyframes pulse {
   0%, 100% {
@@ -273,17 +433,9 @@ h2 {
   }
 }
 
-.timer {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-}
-
-/* ------------------------------------------------------
-   INTERCOM SYSTEM
-------------------------------------------------------- */
+/* ==========================================
+   INTERCOM
+========================================== */
 
 .intercom {
   position: absolute;
@@ -334,54 +486,17 @@ h2 {
   }
 }
 
-/* ------------------------------------------------------
-   END SCREEN
-------------------------------------------------------- */
-
-.end-screen {
-  position: absolute;
-  inset: 0;
-  text-align: center;
-  padding-top: 20vh;
-  animation: fadeIn ease 1s;
-  z-index: 3;
-}
-
-.end-screen h2 {
-  font-size: 3.4rem;
-  margin-bottom: 20px;
-  text-shadow: 0 4px 14px rgba(0,0,0,0.5);
-}
-
-.end-screen button {
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.25s ease;
-}
-
-.end-screen button:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
-}
-
-/* ------------------------------------------------------
+/* ==========================================
    ANIMATIONS
-------------------------------------------------------- */
+========================================== */
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { opacity: 0; }
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }
