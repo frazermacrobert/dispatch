@@ -812,4 +812,4 @@ const App: React.FC = () => {
               <button onClick={() => setIsPaused(true)} className="button">
                 Pause
               </button>
-            </div>
+            </div
