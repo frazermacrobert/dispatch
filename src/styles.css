@@ -23,19 +23,34 @@
   background-position: center;
 }
 
-/* ✅ FIXED: Clear intro background when game starts */
-#app-root.phase-playing {
-  background-image: none;              /* THIS is the fix */
+/* ✅ FIXED: Clear ALL backgrounds when game starts */
+#app-root.phase-playing,
+#app-root.phase-ended {
+  background-image: none !important;
   background-color: #000;
 }
 
-/* Optional subtle end-state darkening */
-#app-root.phase-ended {
-  background-image: 
-    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.7)),
-    url("/bg.png");
+/* ------------------------------------------------------
+   WORLD MAP (only visible during playing/ended phases)
+------------------------------------------------------- */
+
+.world-map {
+  position: absolute;
+  inset: 0;
+  background-image: url("/bg.png");
   background-size: cover;
   background-position: center;
+  z-index: 0;
+}
+
+.world-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 1;
 }
 
 /* ------------------------------------------------------
@@ -48,89 +63,83 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  align-items: center;
-  padding-bottom: 12vh;
-  text-align: center;
+  align-items: flex-start;
+  padding-bottom: 2.5rem;
+  padding-left: 3rem;
+  text-align: left;
   animation: fadeIn ease 1s;
-  z-index: 2;
-}
-
-/* ✅ Force it offscreen when not in intro */
-.phase-playing .start-screen,
-.phase-ended .start-screen {
-  display: none;
-}
-
-.start-screen__title-block {
-  margin-bottom: 40px;
-}
-
-.start-screen__text-statement {
-  font-size: 1.3rem;
-  opacity: 0.9;
-  margin-bottom: 6px;
-}
-
-.start-screen__main-title {
-  font-size: 3.6rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-shadow: 0 5px 20px rgba(255,255,255,0.25);
-  margin-bottom: 14px;
-}
-
-.start-screen__text-caption {
-  font-size: 1.1rem;
-  opacity: 0.85;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .start-screen__gradient {
   position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 50vh;
-  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  inset: 55% 0 0 0;
+  background: linear-gradient(to top, rgba(15,23,42,0.95), transparent);
+  z-index: -1;
 }
 
-/* ------------------------------------------------------
-   BUTTONS — Global Premium Style
-------------------------------------------------------- */
+.start-screen__title-block {
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.start-screen__presenter {
+  font-size: 0.9rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+}
+
+.start-screen__title {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 0.4em;
+}
+
+.start-screen__edition {
+  font-size: 1rem;
+  margin-top: 0.3rem;
+  opacity: 0.85;
+}
+
+.start-screen__actions {
+  display: flex;
+  gap: 1rem;
+  z-index: 11;
+}
 
 .start-screen__button-play,
-.start-screen__button-extras,
-.button,
-.end-screen button {
-  padding: 14px 32px;
-  margin: 10px 0;
-  font-size: 1.2rem;
+.start-screen__button-extras {
+  min-width: 140px;
+  padding: 0.9rem 1.8rem;
+  border-radius: 999px;
   font-weight: 600;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.25);
-  color: white;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
+  font-size: 0.9rem;
   cursor: pointer;
+  box-shadow: 0 10px 30px rgba(15,23,42,0.7);
   transition: all 0.25s ease;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
-}
-
-.start-screen__button-play:hover,
-.start-screen__button-extras:hover,
-.button:hover,
-.end-screen button:hover {
-  background: rgba(255,255,255,0.22);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
 }
 
 .start-screen__button-play {
-  margin-top: 40px;
-  width: 220px;
+  border: 1px solid rgba(59,130,246,0.8);
+  background: linear-gradient(to bottom, #3b82f6, #2563eb);
+  color: white;
 }
 
 .start-screen__button-extras {
-  width: 220px;
-  margin-top: 12px;
+  border: 1px solid rgba(148,163,184,0.7);
+  background: rgba(15,23,42,0.85);
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+.start-screen__button-play:hover,
+.start-screen__button-extras:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(15,23,42,0.8);
 }
 
 /* ------------------------------------------------------
@@ -148,6 +157,27 @@ h2 {
   font-size: 2.8rem;
   margin-bottom: 22px;
   text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+}
+
+.button {
+  padding: 14px 32px;
+  margin: 10px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.button:hover {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
 }
 
 /* Multiple choice buttons (answers) */
@@ -194,6 +224,117 @@ h2 {
 }
 
 /* ------------------------------------------------------
+   PAUSE MENU
+------------------------------------------------------- */
+
+.pause-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.pause-menu {
+  background: rgba(15, 23, 42, 0.95);
+  padding: 3rem;
+  border-radius: 1rem;
+  text-align: center;
+  min-width: 300px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.pause-menu h2 {
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.pause-menu button {
+  display: block;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+/* ------------------------------------------------------
+   MARKER ANIMATIONS
+------------------------------------------------------- */
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+.timer {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* ------------------------------------------------------
+   INTERCOM SYSTEM
+------------------------------------------------------- */
+
+.intercom {
+  position: absolute;
+  top: 120px;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.intercom.visible {
+  visibility: visible;
+}
+
+.intercom-content {
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  white-space: nowrap;
+  transform: translateX(100vw);
+}
+
+.intercom.visible .intercom-content {
+  animation: scroll-left 15s linear forwards;
+}
+
+.intercom-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+  border: 2px solid #fff;
+}
+
+@keyframes scroll-left {
+  from {
+    transform: translateX(100vw);
+  }
+  to {
+    transform: translateX(-110%);
+  }
+}
+
+/* ------------------------------------------------------
    END SCREEN
 ------------------------------------------------------- */
 
@@ -212,6 +353,23 @@ h2 {
   text-shadow: 0 4px 14px rgba(0,0,0,0.5);
 }
 
+.end-screen button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.end-screen button:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
 /* ------------------------------------------------------
    ANIMATIONS
 ------------------------------------------------------- */
@@ -219,4 +377,11 @@ h2 {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
 }
