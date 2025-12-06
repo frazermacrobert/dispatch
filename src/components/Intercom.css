@@ -1,51 +1,50 @@
-/* src/components/Intercom.css */
-.intercom {
-    position: absolute;
-    top: 120px;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    /* justify-content: flex-end;  We will control position with transform */
-    visibility: hidden;
-    overflow: hidden; /* Important: hides the content when it's off-screen */
-    pointer-events: none; /* Prevent interaction with the invisible element */
+import React from "react";
+import { Consultant } from "../game/types";
+
+interface IntercomProps {
+  dialogue: {
+    consultantId: string;
+    text: string;
+  } | null;
+  consultants: Consultant[];
 }
 
-.intercom.visible {
-    visibility: visible;
-}
+const getAvatarFile = (id: string): string => {
+  switch (id) {
+    case "craig":
+      return "craig-design-1.png";
+    case "miles":
+      return "miles-motion-1.png";
+    case "ste":
+      return "ste-content-1.png";
+    default:
+      return `${id}-consultant-1.png`;
+  }
+};
 
-.intercom-content {
-    display: flex;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    white-space: nowrap;
-    transform: translateX(100vw); /* Start completely off-screen to the right of the viewport */
-}
+const Intercom: React.FC<IntercomProps> = ({ dialogue, consultants }) => {
+  if (!dialogue) return null;
 
-.intercom.visible .intercom-content {
-    animation: scroll-left 15s linear forwards;
-}
+  const consultant = consultants.find((c) => c.id === dialogue.consultantId);
+  if (!consultant) return null;
 
-.intercom-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-    border: 2px solid #fff;
-}
+  const avatarFile = getAvatarFile(consultant.id);
+  const avatarSrc = `${import.meta.env.BASE_URL}avatars/${avatarFile}`;
 
-@keyframes scroll-left {
-    from {
-        transform: translateX(100vw);
-    }
-    to {
-        /* This will make it scroll all the way off the left side */
-        transform: translateX(-110%);
-    }
-}
+  return (
+    <div className={`intercom ${dialogue ? "visible" : ""}`}>
+      <div className="intercom-content">
+        <img
+          src={avatarSrc}
+          alt={consultant.name}
+          className="intercom-image"
+        />
+        <div>
+          <strong>{consultant.name}:</strong> {dialogue.text}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Intercom;
