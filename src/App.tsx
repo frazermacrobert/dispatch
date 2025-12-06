@@ -812,4 +812,98 @@ const App: React.FC = () => {
               <button onClick={() => setIsPaused(true)} className="button">
                 Pause
               </button>
-            </div
+            </div>
+          </div>
+
+          <MarkerLayer
+            briefs={briefs.filter((b) => b.status === "pending")}
+            onMarkerClick={handleMarkerClick}
+          />
+
+          <Intercom dialogue={dialogue} consultants={consultants} />
+          <ConsultantBar consultants={consultants} />
+
+          {selectedBrief && (
+            <BriefModal
+              brief={selectedBrief}
+              consultants={consultants}
+              selectedIds={selectedConsultantIds}
+              onToggleConsultant={handleToggleConsultant}
+              onDispatch={handleDispatch}
+              onClose={handleCloseModal}
+              outcomeMessage={outcomeMessage}
+              showPassCriteria={true}
+            />
+          )}
+        </>
+      )}
+
+      {/* ENDED */}
+      {phase === "ended" && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            color: "white",
+            background: "rgba(15, 23, 42, 0.95)",
+            padding: "3rem",
+            borderRadius: "1rem",
+            minWidth: "400px",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "2.5rem",
+              marginBottom: "2rem",
+              fontWeight: 700,
+            }}
+          >
+            Game Complete
+          </h1>
+          <div style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>
+            <span style={{ color: "#10b981", fontWeight: 600 }}>
+              {successCount}
+            </span>
+            {" successful missions"}
+          </div>
+          <div style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>
+            <span style={{ color: "#ef4444", fontWeight: 600 }}>
+              {failCount}
+            </span>
+            {" failed missions"}
+          </div>
+          <div
+            style={{
+              fontSize: "1.2rem",
+              marginBottom: "2rem",
+              opacity: 0.7,
+            }}
+          >
+            Success rate:{" "}
+            {((successCount / spawnConfig.totalBriefs) * 100).toFixed(1)}%
+          </div>
+          <button
+            onClick={startGame}
+            style={{
+              padding: "1rem 2rem",
+              fontSize: "1.1rem",
+              background: "#3b82f6",
+              color: "white",
+              border: "none",
+              borderRadius: "0.5rem",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            Play Again
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
