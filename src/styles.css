@@ -923,8 +923,7 @@ body {
 
 .phase-playing .start-screen,
 .phase-ended .start-screen {
-  opacity: 0;
-  pointer-events: none;
+  display: none;
 }
 
 .start-screen__gradient {

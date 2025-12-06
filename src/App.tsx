@@ -568,6 +568,7 @@ const App: React.FC = () => {
       )}
 
       {/* INTRO / TITLE SCREEN */}
+      {phase === "intro" && (
       <div className="start-screen">
         {/* subtle dark gradient at bottom for menu */}
         <div className="start-screen__gradient" />
@@ -778,6 +779,7 @@ const App: React.FC = () => {
           </div>
         )}
       </div>
+      )}
 
       {/* PLAYING */}
       {phase === "playing" && (
