@@ -50,7 +50,7 @@ body {
 .world-map {
   position: absolute;
   inset: 0;
-  background-image: url("/bg.jpg");
+  background-image: url("/worldmap.jpg");
   background-size: cover;
   background-position: center;
   z-index: 0;
