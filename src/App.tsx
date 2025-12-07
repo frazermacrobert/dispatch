@@ -86,6 +86,7 @@ const App: React.FC = () => {
     setSelectedBriefId(null);
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
+    setDialogue(null);
   };
 
   const spawnBrief = (count = 1) => {
@@ -442,7 +443,7 @@ const App: React.FC = () => {
 
   const selectedBrief = briefs.find((b) => b.id === selectedBriefId);
 
-  // RENDER ONLY ONE PHASE AT A TIME - CLEAN SEPARATION
+  // RENDER ONLY ONE PHASE AT A TIME
   if (phase === "intro") {
     return (
       <div className="game-container phase-intro">
