@@ -28,7 +28,7 @@ body {
 /* INTRO PHASE */
 .game-container.phase-intro {
   background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.6)),
-              url("/startbg.png");
+              url("/dispatch/startbg.png");
   background-size: cover;
   background-position: center;
 }
@@ -36,17 +36,6 @@ body {
 /* PLAYING PHASE */
 .game-container.phase-playing {
   background: #000;
-}
-
-/* NUCLEAR OPTION: Absolutely hide start screen elements when playing */
-.game-container.phase-playing .start-screen,
-.game-container.phase-playing .start-screen *,
-.game-container.phase-ended .start-screen,
-.game-container.phase-ended .start-screen * {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
 }
 
 /* ENDED PHASE */
@@ -61,18 +50,19 @@ body {
 .world-map {
   position: absolute;
   inset: 0;
-  background-image: url("/worldmap.jpg");
+  background-image: url("/dispatch/worldmap.jpg");
   background-size: cover;
   background-position: center;
   z-index: 0;
+  opacity: 0.4;
 }
 
 .world-grid-overlay {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
   background-size: 50px 50px;
   z-index: 1;
 }
@@ -422,8 +412,14 @@ body {
 }
 
 /* ==========================================
-   MARKERS & TIMERS
+   MARKERS & TIMERS (FIXED ALIGNMENT)
 ========================================== */
+
+.marker-wrapper {
+  position: absolute;
+  pointer-events: auto;
+  text-align: center;
+}
 
 .timer {
   margin-top: 0.5rem;
@@ -436,65 +432,74 @@ body {
 @keyframes pulse {
   0%, 100% {
     opacity: 0.6;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
   50% {
     opacity: 0.3;
-    transform: translate(-50%, -50%) scale(1.2);
+    transform: scale(1.2);
   }
 }
 
 /* ==========================================
-   INTERCOM
+   INTERCOM (FIXED)
 ========================================== */
 
 .intercom {
   position: absolute;
-  top: 120px;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  visibility: hidden;
-  overflow: hidden;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .intercom.visible {
-  visibility: visible;
+  opacity: 1;
 }
 
 .intercom-content {
   display: flex;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  white-space: nowrap;
-  transform: translateX(100vw);
+  gap: 0.75rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  min-width: 300px;
+  max-width: 500px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.intercom.visible .intercom-content {
-  animation: scroll-left 15s linear forwards;
+.intercom-content::before {
+  content: "📡";
+  font-size: 1.2rem;
+}
+
+.intercom-content::after {
+  content: "📡";
+  font-size: 1.2rem;
 }
 
 .intercom-image {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 15px;
-  border: 2px solid #fff;
+  border: 2px solid rgba(59, 130, 246, 0.6);
+  object-fit: cover;
 }
 
-@keyframes scroll-left {
-  from {
-    transform: translateX(100vw);
-  }
-  to {
-    transform: translateX(-110%);
-  }
+.intercom-content div {
+  flex: 1;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+  line-height: 1.4;
+}
+
+.intercom-content strong {
+  color: #60a5fa;
+  font-weight: 600;
 }
 
 /* ==========================================
