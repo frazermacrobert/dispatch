@@ -28,7 +28,7 @@ body {
 /* INTRO PHASE */
 .game-container.phase-intro {
   background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.6)),
-              url("/startbg.png");
+              url("/startbg.jpg");
   background-size: cover;
   background-position: center;
 }
@@ -50,7 +50,7 @@ body {
 .world-map {
   position: absolute;
   inset: 0;
-  background-image: url("/bg.png");
+  background-image: url("/bg.jpg");
   background-size: cover;
   background-position: center;
   z-index: 0;
