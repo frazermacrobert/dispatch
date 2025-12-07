@@ -55,6 +55,7 @@ body {
   background-position: center;
   z-index: 0;
   opacity: 0.4;
+  pointer-events: none;
 }
 
 .world-grid-overlay {
@@ -65,6 +66,7 @@ body {
     linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
   background-size: 50px 50px;
   z-index: 1;
+  pointer-events: none;
 }
 
 /* ==========================================
@@ -265,6 +267,11 @@ body {
   justify-content: space-between;
   align-items: center;
   z-index: 100;
+  pointer-events: auto;
+}
+
+.game-header * {
+  pointer-events: auto;
 }
 
 .game-header__briefs {
@@ -412,13 +419,25 @@ body {
 }
 
 /* ==========================================
-   MARKERS & TIMERS (FIXED ALIGNMENT)
+   MARKERS & TIMERS (FIXED ALIGNMENT + CLICKABILITY)
 ========================================== */
 
 .marker-wrapper {
   position: absolute;
   pointer-events: auto;
   text-align: center;
+  z-index: 50;
+}
+
+.marker-wrapper > div {
+  position: relative;
+}
+
+.marker-wrapper button {
+  position: relative;
+  z-index: 51;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .timer {
@@ -427,6 +446,7 @@ body {
   font-weight: 600;
   color: white;
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  pointer-events: none;
 }
 
 @keyframes pulse {
@@ -441,7 +461,7 @@ body {
 }
 
 /* ==========================================
-   INTERCOM (FIXED)
+   INTERCOM (FIXED - ALWAYS VISIBLE)
 ========================================== */
 
 .intercom {
@@ -451,12 +471,6 @@ body {
   transform: translateX(-50%);
   z-index: 150;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.intercom.visible {
-  opacity: 1;
 }
 
 .intercom-content {
@@ -482,22 +496,42 @@ body {
   font-size: 1.2rem;
 }
 
+.intercom-message {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 40px;
+}
+
 .intercom-image {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   border: 2px solid rgba(59, 130, 246, 0.6);
   object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.intercom-content div {
+.intercom.visible .intercom-image {
+  opacity: 1;
+}
+
+.intercom-text {
   flex: 1;
   font-size: 0.85rem;
-  color: #e5e7eb;
+  color: #9ca3af;
   line-height: 1.4;
+  font-style: italic;
 }
 
-.intercom-content strong {
+.intercom.visible .intercom-text {
+  color: #e5e7eb;
+  font-style: normal;
+}
+
+.intercom-text strong {
   color: #60a5fa;
   font-weight: 600;
 }
