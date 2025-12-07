@@ -61,7 +61,7 @@ body {
 .world-map {
   position: absolute;
   inset: 0;
-  background-image: url("/bg.png");
+  background-image: url("/worldmap.jpg");
   background-size: cover;
   background-position: center;
   z-index: 0;
