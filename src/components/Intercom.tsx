@@ -23,24 +23,33 @@ const getAvatarFile = (id: string): string => {
 };
 
 const Intercom: React.FC<IntercomProps> = ({ dialogue, consultants }) => {
-  if (!dialogue) return null;
+  const consultant = dialogue 
+    ? consultants.find((c) => c.id === dialogue.consultantId)
+    : null;
 
-  const consultant = consultants.find((c) => c.id === dialogue.consultantId);
-  if (!consultant) return null;
-
-  const avatarFile = getAvatarFile(consultant.id);
-  const avatarSrc = `${import.meta.env.BASE_URL}avatars/${avatarFile}`;
+  const avatarFile = consultant ? getAvatarFile(consultant.id) : "";
+  const avatarSrc = consultant ? `${import.meta.env.BASE_URL}avatars/${avatarFile}` : "";
 
   return (
     <div className={`intercom ${dialogue ? "visible" : ""}`}>
       <div className="intercom-content">
-        <img
-          src={avatarSrc}
-          alt={consultant.name}
-          className="intercom-image"
-        />
-        <div>
-          <strong>{consultant.name}:</strong> {dialogue.text}
+        <div className="intercom-message">
+          {consultant && (
+            <img
+              src={avatarSrc}
+              alt={consultant.name}
+              className="intercom-image"
+            />
+          )}
+          <div className="intercom-text">
+            {dialogue ? (
+              <>
+                <strong>{consultant?.name}:</strong> {dialogue.text}
+              </>
+            ) : (
+              "Awaiting transmission..."
+            )}
+          </div>
         </div>
       </div>
     </div>
