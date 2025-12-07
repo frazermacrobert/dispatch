@@ -28,7 +28,7 @@ body {
 /* INTRO PHASE */
 .game-container.phase-intro {
   background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.6)),
-              url("/startbg.jpg");
+              url("/startbg.png");
   background-size: cover;
   background-position: center;
 }
@@ -36,6 +36,17 @@ body {
 /* PLAYING PHASE */
 .game-container.phase-playing {
   background: #000;
+}
+
+/* NUCLEAR OPTION: Absolutely hide start screen elements when playing */
+.game-container.phase-playing .start-screen,
+.game-container.phase-playing .start-screen *,
+.game-container.phase-ended .start-screen,
+.game-container.phase-ended .start-screen * {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* ENDED PHASE */
@@ -50,7 +61,7 @@ body {
 .world-map {
   position: absolute;
   inset: 0;
-  background-image: url("/worldmap.jpg");
+  background-image: url("/bg.png");
   background-size: cover;
   background-position: center;
   z-index: 0;
