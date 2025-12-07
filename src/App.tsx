@@ -585,6 +585,7 @@ const App: React.FC = () => {
   return (
     <div className="game-container phase-ended">
       <div className="world-map" />
+      <div className="world-grid-overlay" />
       
       <div className="end-screen">
         <h1 className="end-screen__title">Game Complete</h1>
@@ -608,4 +609,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App; 
+export default App;
