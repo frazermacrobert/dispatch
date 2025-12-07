@@ -74,11 +74,7 @@ const App: React.FC = () => {
     }));
     setConsultants(initialConsultants);
 
-    setPhase("playing");
-    setIsPaused(false);
-    isPausedRef.current = false;
-    setShowExtras(false);
-
+    // Reset all state
     setBriefsSpawned(0);
     setSuccessCount(0);
     setFailCount(0);
@@ -87,6 +83,13 @@ const App: React.FC = () => {
     setSelectedConsultantIds([]);
     setOutcomeMessage(null);
     setDialogue(null);
+    setShowExtras(false);
+    
+    setIsPaused(false);
+    isPausedRef.current = false;
+    
+    // Set phase to playing AFTER resetting state
+    setPhase("playing");
   };
 
   const spawnBrief = (count = 1) => {
